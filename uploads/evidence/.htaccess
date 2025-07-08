@@ -1,0 +1,224 @@
+# Security configuration for evidence uploads directory
+# Redcliff Municipality Fault Reporting System
+
+# Deny access to PHP files and other executable scripts
+<Files *.php>
+    Order allow,deny
+    Deny from all
+</Files>
+
+<Files *.php3>
+    Order allow,deny
+    Deny from all
+</Files>
+
+<Files *.php4>
+    Order allow,deny
+    Deny from all
+</Files>
+
+<Files *.php5>
+    Order allow,deny
+    Deny from all
+</Files>
+
+<Files *.phtml>
+    Order allow,deny
+    Deny from all
+</Files>
+
+<Files *.pl>
+    Order allow,deny
+    Deny from all
+</Files>
+
+<Files *.py>
+    Order allow,deny
+    Deny from all
+</Files>
+
+<Files *.jsp>
+    Order allow,deny
+    Deny from all
+</Files>
+
+<Files *.asp>
+    Order allow,deny
+    Deny from all
+</Files>
+
+<Files *.sh>
+    Order allow,deny
+    Deny from all
+</Files>
+
+<Files *.cgi>
+    Order allow,deny
+    Deny from all
+</Files>
+
+# Deny access to .htaccess and other sensitive files
+<Files .htaccess>
+    Order allow,deny
+    Deny from all
+</Files>
+
+<Files .htpasswd>
+    Order allow,deny
+    Deny from all
+</Files>
+
+<Files .env>
+    Order allow,deny
+    Deny from all
+</Files>
+
+<Files *.log>
+    Order allow,deny
+    Deny from all
+</Files>
+
+# Allow only specific file types
+<FilesMatch "\.(jpg|jpeg|png|gif|pdf|doc|docx|txt)$">
+    Order allow,deny
+    Allow from all
+</FilesMatch>
+
+# Prevent direct access to all other files
+<FilesMatch ".*">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# Override the deny for allowed file types
+<FilesMatch "\.(jpg|jpeg|png|gif|pdf|doc|docx|txt)$">
+    Order allow,deny
+    Allow from all
+</FilesMatch>
+
+# Disable PHP execution
+php_flag engine off
+
+# Remove PHP handler
+RemoveHandler .php .phtml .php3 .php4 .php5
+
+# Set proper MIME types for security
+<IfModule mod_mime.c>
+    AddType text/plain .php .php3 .phtml .pht .inc
+    AddType text/plain .pl .py .cgi .sh
+</IfModule>
+
+# Prevent access to backup files and temporary files
+<FilesMatch "(^#.*#|\.(bak|config|dist|fla|inc|ini|log|psd|sh|sql|sw[op])|~)$">
+    Order allow,deny
+    Deny from all
+    Satisfy All
+</FilesMatch>
+
+# Set security headers
+<IfModule mod_headers.c>
+    # Prevent files from being executed as scripts
+    Header set X-Content-Type-Options nosniff
+    
+    # Prevent embedding in frames (clickjacking protection)
+    Header set X-Frame-Options DENY
+    
+    # Enable XSS protection
+    Header set X-XSS-Protection "1; mode=block"
+    
+    # Content Security Policy for uploaded files
+    Header set Content-Security-Policy "default-src 'none'; img-src 'self'; object-src 'none'; script-src 'none'; style-src 'none';"
+</IfModule>
+
+# Disable server signature
+ServerSignature Off
+
+# Disable directory browsing
+Options -Indexes
+
+# Disable MultiViews
+Options -MultiViews
+
+# Disable server-side includes
+Options -Includes
+
+# Disable CGI execution
+Options -ExecCGI
+
+# Follow symbolic links (but be careful with this in production)
+Options +FollowSymLinks
+
+# Set file upload limits (if supported)
+<IfModule mod_php.c>
+    php_value upload_max_filesize 5M
+    php_value post_max_size 5M
+    php_value max_execution_time 30
+    php_value max_input_time 30
+</IfModule>
+
+# Prevent image hotlinking (optional - uncomment if needed)
+# <IfModule mod_rewrite.c>
+#     RewriteEngine On
+#     RewriteCond %{HTTP_REFERER} !^$
+#     RewriteCond %{HTTP_REFERER} !^http(s)?://(www\.)?yourdomain.com [NC]
+#     RewriteRule \.(jpg|jpeg|png|gif)$ - [F]
+# </IfModule>
+
+# Set cache headers for better performance
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresByType image/jpg "access plus 1 month"
+    ExpiresByType image/jpeg "access plus 1 month"
+    ExpiresByType image/gif "access plus 1 month"
+    ExpiresByType image/png "access plus 1 month"
+    ExpiresByType application/pdf "access plus 1 month"
+</IfModule>
+
+# Compress files for better performance
+<IfModule mod_deflate.c>
+    SetOutputFilter DEFLATE
+    SetEnvIfNoCase Request_URI \
+        \.(?:gif|jpe?g|png)$ no-gzip dont-vary
+    SetEnvIfNoCase Request_URI \
+        \.(?:exe|t?gz|zip|bz2|sit|rar)$ no-gzip dont-vary
+</IfModule>
+
+# Error documents
+ErrorDocument 403 "Access Forbidden"
+ErrorDocument 404 "File Not Found"
+
+# Log security events (if logging is enabled)
+<IfModule mod_log_config.c>
+    LogFormat "%h %l %u %t \"%r\" %>s %O \"%{Referer}i\" \"%{User-Agent}i\"" security
+    # CustomLog /path/to/security.log security
+</IfModule>
+
+# Limit file upload size at directory level
+LimitRequestBody 5242880
+
+# Additional security measures
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    
+    # Block requests with suspicious query strings
+    RewriteCond %{QUERY_STRING} (<|%3C).*script.*(>|%3E) [NC,OR]
+    RewriteCond %{QUERY_STRING} GLOBALS(=|\[|\%[0-9A-Z]{0,2}) [OR]
+    RewriteCond %{QUERY_STRING} _REQUEST(=|\[|\%[0-9A-Z]{0,2}) [OR]
+    RewriteCond %{QUERY_STRING} ^.*(\[|\]|\(|\)|<|>|ê|"|;|\?|\*|=$).* [NC,OR]
+    RewriteCond %{QUERY_STRING} ^.*("|'|<|>|\|{2};|\|{2}:|\|{2}(.*)=$).* [NC,OR]
+    RewriteCond %{QUERY_STRING} ^.*(%0|%A|%B|%C|%D|%E|%F|127\.0).* [NC,OR]
+    RewriteCond %{QUERY_STRING} ^.*(globals|encode|localhost|loopback).* [NC,OR]
+    RewriteCond %{QUERY_STRING} ^.*(request|select|insert|union|declare).* [NC]
+    RewriteRule ^(.*)$ - [F,L]
+    
+    # Block requests with suspicious user agents
+    RewriteCond %{HTTP_USER_AGENT} ^$ [OR]
+    RewriteCond %{HTTP_USER_AGENT} ^(java|curl|wget) [NC,OR]
+    RewriteCond %{HTTP_USER_AGENT} (libwww-perl|python|nikto|scan|bot) [NC,OR]
+    RewriteCond %{HTTP_USER_AGENT} (<|>|'|%0A|%0D|%27|%3C|%3E|%00) [NC]
+    RewriteRule ^(.*)$ - [F,L]
+    
+    # Block direct access to this .htaccess file
+    RewriteCond %{THE_REQUEST} /\.htaccess [NC]
+    RewriteRule ^(.*)$ - [F,L]
+</IfModule>
