@@ -83,7 +83,7 @@ include '../includes/header.php';
                     SUM(CASE WHEN status = 'resolved' THEN 1 ELSE 0 END) as resolved,
                     SUM(CASE WHEN status = 'closed' THEN 1 ELSE 0 END) as closed,
                     SUM(CASE WHEN priority = 'high' THEN 1 ELSE 0 END) as high_priority,
-                    AVG(CASE WHEN status = 'resolved' THEN DATEDIFF(updated_at, created_at) ELSE NULL END) as avg_resolution_time
+                    AVG(CASE WHEN status = 'resolved' THEN EXTRACT(EPOCH FROM (updated_at - created_at))/86400 ELSE NULL END) as avg_resolution_time
                 FROM fault_reports 
                 WHERE created_at BETWEEN ? AND ?",
                 [$date_from, $date_to . ' 23:59:59']
@@ -209,7 +209,7 @@ include '../includes/header.php';
                     SUM(CASE WHEN status = 'resolved' THEN 1 ELSE 0 END) as resolved,
                     SUM(CASE WHEN status = 'in_progress' THEN 1 ELSE 0 END) as in_progress,
                     SUM(CASE WHEN priority = 'high' THEN 1 ELSE 0 END) as high_priority,
-                    AVG(CASE WHEN status = 'resolved' THEN DATEDIFF(updated_at, created_at) ELSE NULL END) as avg_resolution_time
+                    AVG(CASE WHEN status = 'resolved' THEN EXTRACT(EPOCH FROM (updated_at - created_at))/86400 ELSE NULL END) as avg_resolution_time
                 FROM fault_reports 
                 WHERE created_at BETWEEN ? AND ?
                 GROUP BY category
@@ -301,7 +301,7 @@ include '../includes/header.php';
                     COUNT(*) as total_assigned,
                     SUM(CASE WHEN status = 'resolved' THEN 1 ELSE 0 END) as resolved,
                     SUM(CASE WHEN status = 'in_progress' THEN 1 ELSE 0 END) as in_progress,
-                    AVG(CASE WHEN status = 'resolved' THEN DATEDIFF(updated_at, created_at) ELSE NULL END) as avg_resolution_time
+                    AVG(CASE WHEN status = 'resolved' THEN EXTRACT(EPOCH FROM (updated_at - created_at))/86400 ELSE NULL END) as avg_resolution_time
                 FROM fault_reports 
                 WHERE assigned_department IS NOT NULL 
                 AND created_at BETWEEN ? AND ?

@@ -88,7 +88,7 @@ $departments = $db->select(
             SUM(CASE WHEN fr.status = 'assigned' THEN 1 ELSE 0 END) as assigned_faults,
             SUM(CASE WHEN fr.status = 'in_progress' THEN 1 ELSE 0 END) as in_progress_faults,
             SUM(CASE WHEN fr.status = 'resolved' THEN 1 ELSE 0 END) as resolved_faults,
-            AVG(CASE WHEN fr.status = 'resolved' THEN DATEDIFF(fr.updated_at, fr.created_at) ELSE NULL END) as avg_resolution_time
+            AVG(CASE WHEN fr.status = 'resolved' THEN EXTRACT(EPOCH FROM (fr.updated_at - fr.created_at))/86400 ELSE NULL END) as avg_resolution_time
      FROM departments d
      LEFT JOIN fault_reports fr ON d.name = fr.assigned_department
      GROUP BY d.id

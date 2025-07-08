@@ -142,7 +142,7 @@ $query = "SELECT fr.*,
 $faults = $db->select($query, $params);
 
 // Get admin users for assignment
-$admin_users = $db->select("SELECT id, first_name, last_name FROM users WHERE role = 'admin' AND status = 'active'");
+$admin_users = $db->select("SELECT id, first_name, last_name FROM users WHERE role = 'admin' AND is_active = true");
 
 include '../includes/header.php';
 ?>

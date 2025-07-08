@@ -10,23 +10,23 @@ $user = getCurrentUser();
 // Get analytics data
 $monthly_trends = $db->select(
     "SELECT 
-        DATE_FORMAT(created_at, '%Y-%m') as month,
+        TO_CHAR(created_at, 'YYYY-MM') as month,
         COUNT(*) as total_faults,
         SUM(CASE WHEN status = 'resolved' THEN 1 ELSE 0 END) as resolved_faults,
         SUM(CASE WHEN priority = 'high' THEN 1 ELSE 0 END) as high_priority_faults
     FROM fault_reports 
-    WHERE created_at >= DATE_SUB(NOW(), INTERVAL 12 MONTH)
-    GROUP BY DATE_FORMAT(created_at, '%Y-%m')
+    WHERE created_at >= NOW() - INTERVAL '12 months'
+    GROUP BY TO_CHAR(created_at, 'YYYY-MM')
     ORDER BY month ASC"
 );
 
 $peak_hours = $db->select(
     "SELECT 
-        HOUR(created_at) as hour,
+        EXTRACT(HOUR FROM created_at) as hour,
         COUNT(*) as fault_count
     FROM fault_reports 
-    WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)
-    GROUP BY HOUR(created_at)
+    WHERE created_at >= NOW() - INTERVAL '30 days'
+    GROUP BY EXTRACT(HOUR FROM created_at)
     ORDER BY hour ASC"
 );
 
@@ -36,22 +36,22 @@ $location_analysis = $db->select(
         COUNT(*) as fault_count,
         SUM(CASE WHEN status = 'resolved' THEN 1 ELSE 0 END) as resolved_count
     FROM fault_reports 
-    WHERE created_at >= DATE_SUB(NOW(), INTERVAL 6 MONTH)
+    WHERE created_at >= NOW() - INTERVAL '6 months'
     GROUP BY location
-    HAVING fault_count > 1
-    ORDER BY fault_count DESC
+    HAVING COUNT(*) > 1
+    ORDER BY COUNT(*) DESC
     LIMIT 10"
 );
 
 $response_time_analysis = $db->select(
     "SELECT 
         category,
-        AVG(DATEDIFF(updated_at, created_at)) as avg_response_time,
-        MIN(DATEDIFF(updated_at, created_at)) as min_response_time,
-        MAX(DATEDIFF(updated_at, created_at)) as max_response_time
+        AVG(EXTRACT(EPOCH FROM (updated_at - created_at))/86400) as avg_response_time,
+        MIN(EXTRACT(EPOCH FROM (updated_at - created_at))/86400) as min_response_time,
+        MAX(EXTRACT(EPOCH FROM (updated_at - created_at))/86400) as max_response_time
     FROM fault_reports 
     WHERE status = 'resolved' 
-    AND created_at >= DATE_SUB(NOW(), INTERVAL 6 MONTH)
+    AND created_at >= NOW() - INTERVAL '6 months'
     GROUP BY category
     ORDER BY avg_response_time DESC"
 );
@@ -59,26 +59,26 @@ $response_time_analysis = $db->select(
 // Predictive analytics - fault patterns
 $seasonal_patterns = $db->select(
     "SELECT 
-        MONTH(created_at) as month,
+        EXTRACT(MONTH FROM created_at) as month,
         category,
         COUNT(*) as fault_count
     FROM fault_reports 
-    WHERE created_at >= DATE_SUB(NOW(), INTERVAL 24 MONTH)
-    GROUP BY MONTH(created_at), category
+    WHERE created_at >= NOW() - INTERVAL '24 months'
+    GROUP BY EXTRACT(MONTH FROM created_at), category
     ORDER BY month ASC, fault_count DESC"
 );
 
 // Performance metrics
 $performance_metrics = $db->selectOne(
     "SELECT 
-        AVG(DATEDIFF(updated_at, created_at)) as avg_resolution_time,
+        AVG(EXTRACT(EPOCH FROM (updated_at - created_at))/86400) as avg_resolution_time,
         COUNT(*) as total_processed,
         SUM(CASE WHEN status = 'resolved' THEN 1 ELSE 0 END) as total_resolved,
-        SUM(CASE WHEN DATEDIFF(updated_at, created_at) <= 3 THEN 1 ELSE 0 END) as resolved_within_3_days,
-        SUM(CASE WHEN priority = 'high' AND DATEDIFF(updated_at, created_at) <= 1 THEN 1 ELSE 0 END) as high_priority_fast_resolved
+        SUM(CASE WHEN EXTRACT(EPOCH FROM (updated_at - created_at))/86400 <= 3 THEN 1 ELSE 0 END) as resolved_within_3_days,
+        SUM(CASE WHEN priority = 'high' AND EXTRACT(EPOCH FROM (updated_at - created_at))/86400 <= 1 THEN 1 ELSE 0 END) as high_priority_fast_resolved
     FROM fault_reports 
     WHERE status IN ('resolved', 'closed') 
-    AND created_at >= DATE_SUB(NOW(), INTERVAL 6 MONTH)"
+    AND created_at >= NOW() - INTERVAL '6 months'"
 );
 
 include '../includes/header.php';
@@ -124,7 +124,7 @@ include '../includes/header.php';
                 <div class="card-body">
                     <div class="d-flex justify-content-between">
                         <div>
-                            <h4 class="mb-1"><?php echo round(($performance_metrics['total_resolved'] / $performance_metrics['total_processed']) * 100, 1); ?>%</h4>
+                            <h4 class="mb-1"><?php echo $performance_metrics['total_processed'] > 0 ? round(($performance_metrics['total_resolved'] / $performance_metrics['total_processed']) * 100, 1) : 0; ?>%</h4>
                             <p class="mb-0">Resolution Rate</p>
                         </div>
                         <div class="align-self-center">

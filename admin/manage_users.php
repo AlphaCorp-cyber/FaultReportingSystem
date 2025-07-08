@@ -151,8 +151,8 @@ include '../includes/header.php';
                 COUNT(*) as total_users,
                 SUM(CASE WHEN role = 'admin' THEN 1 ELSE 0 END) as admin_count,
                 SUM(CASE WHEN role = 'resident' THEN 1 ELSE 0 END) as resident_count,
-                SUM(CASE WHEN status = 'active' THEN 1 ELSE 0 END) as active_count,
-                SUM(CASE WHEN status = 'suspended' THEN 1 ELSE 0 END) as suspended_count
+                SUM(CASE WHEN is_active = true THEN 1 ELSE 0 END) as active_count,
+                SUM(CASE WHEN is_active = false THEN 1 ELSE 0 END) as inactive_count
             FROM users"
         );
         ?>
