@@ -18,7 +18,7 @@ $stats = $db->selectOne(
         SUM(CASE WHEN status = 'closed' THEN 1 ELSE 0 END) as closed,
         SUM(CASE WHEN status = 'rejected' THEN 1 ELSE 0 END) as rejected,
         SUM(CASE WHEN priority = 'high' THEN 1 ELSE 0 END) as high_priority,
-        SUM(CASE WHEN created_at >= DATE_SUB(NOW(), INTERVAL 24 HOUR) THEN 1 ELSE 0 END) as last_24h
+        SUM(CASE WHEN created_at >= NOW() - INTERVAL '24 hours' THEN 1 ELSE 0 END) as last_24h
     FROM fault_reports"
 );
 
@@ -48,7 +48,7 @@ $department_stats = $db->select(
         assigned_department,
         COUNT(*) as total_assigned,
         SUM(CASE WHEN status = 'resolved' THEN 1 ELSE 0 END) as resolved_count,
-        AVG(CASE WHEN status = 'resolved' THEN DATEDIFF(updated_at, created_at) ELSE NULL END) as avg_resolution_days
+        AVG(CASE WHEN status = 'resolved' THEN EXTRACT(EPOCH FROM (updated_at - created_at))/86400 ELSE NULL END) as avg_resolution_days
     FROM fault_reports 
     WHERE assigned_department IS NOT NULL
     GROUP BY assigned_department"
@@ -67,7 +67,7 @@ $user_stats = $db->selectOne(
         COUNT(*) as total_users,
         SUM(CASE WHEN role = 'resident' THEN 1 ELSE 0 END) as residents,
         SUM(CASE WHEN role = 'admin' THEN 1 ELSE 0 END) as admins,
-        SUM(CASE WHEN status = 'active' THEN 1 ELSE 0 END) as active_users
+        SUM(CASE WHEN is_active = true THEN 1 ELSE 0 END) as active_users
     FROM users"
 );
 

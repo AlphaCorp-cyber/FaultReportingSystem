@@ -32,7 +32,7 @@ $recent_faults = $db->select(
 // Get unread notifications
 $notifications = $db->select(
     "SELECT * FROM notifications 
-     WHERE user_id = ? AND is_read = 0 
+     WHERE user_id = ? AND is_read = false 
      ORDER BY created_at DESC 
      LIMIT 5",
     [$user['id']]

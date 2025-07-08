@@ -18,8 +18,115 @@
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     line-height: 1.6;
-    color: #333;
+    color: #212529;
     background-color: #f8f9fa;
+}
+
+/* Ensure text contrast */
+.text-dark {
+    color: #212529 !important;
+}
+
+.text-light {
+    color: #f8f9fa !important;
+}
+
+.text-muted {
+    color: #6c757d !important;
+}
+
+/* Card text colors */
+.card {
+    color: #212529;
+}
+
+.card-header {
+    color: #212529;
+    background-color: #f8f9fa;
+}
+
+.card-body {
+    color: #212529;
+}
+
+/* Table text colors */
+.table {
+    color: #212529;
+}
+
+.table th {
+    color: #212529;
+    background-color: #f8f9fa;
+}
+
+.table td {
+    color: #212529;
+}
+
+/* Badge text colors */
+.badge {
+    color: #fff;
+}
+
+.badge.bg-light {
+    color: #212529 !important;
+}
+
+.badge.bg-warning {
+    color: #212529 !important;
+}
+
+/* Button text colors */
+.btn-light {
+    color: #212529;
+}
+
+.btn-outline-light {
+    color: #f8f9fa;
+}
+
+.btn-outline-light:hover {
+    color: #212529;
+}
+
+/* Dropdown text colors */
+.dropdown-menu {
+    color: #212529;
+}
+
+.dropdown-item {
+    color: #212529;
+}
+
+/* Navbar text colors */
+.navbar-dark .navbar-nav .nav-link {
+    color: #f8f9fa;
+}
+
+.navbar-dark .navbar-brand {
+    color: #f8f9fa;
+}
+
+/* Footer text colors */
+footer {
+    color: #f8f9fa;
+}
+
+/* Alert text colors */
+.alert-danger {
+    color: #721c24;
+}
+
+.alert-success {
+    color: #155724;
+}
+
+.alert-warning {
+    color: #856404;
+}
+
+.alert-info {
+    color: #0c5460;
 }
 
 /* Navigation */
