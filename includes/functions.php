@@ -28,6 +28,9 @@ function requireRole($role) {
 }
 
 function sanitizeInput($input) {
+    if ($input === null) {
+        return '';
+    }
     return htmlspecialchars(strip_tags(trim($input)));
 }
 

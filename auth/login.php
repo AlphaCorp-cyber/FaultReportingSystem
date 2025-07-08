@@ -17,8 +17,8 @@ if (isLoggedIn()) {
 $error = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $email = sanitizeInput($_POST['email']);
-    $password = $_POST['password'];
+    $email = sanitizeInput($_POST['email'] ?? '');
+    $password = $_POST['password'] ?? '';
     
     if (empty($email) || empty($password)) {
         $error = 'Please fill in all fields';
@@ -125,12 +125,12 @@ include '../includes/header.php';
                         <div class="col-6">
                             <strong>Admin:</strong><br>
                             <small>admin@redcliff.gov.zw</small><br>
-                            <small>password</small>
+                            <small>admin123</small>
                         </div>
                         <div class="col-6">
                             <strong>Resident:</strong><br>
-                            <small>resident@test.com</small><br>
-                            <small>password</small>
+                            <small>john.doe@example.com</small><br>
+                            <small>resident123</small>
                         </div>
                     </div>
                 </div>
