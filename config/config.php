@@ -74,4 +74,8 @@ date_default_timezone_set('Africa/Harare');
 
 // Include database connection
 require_once 'database.php';
+
+// Create auth instance
+require_once __DIR__ . '/../includes/auth.php';
+$auth = new Auth();
 ?>

@@ -112,6 +112,8 @@ function uploadFile($file, $upload_dir = UPLOAD_DIR) {
     return ['success' => false, 'message' => 'Failed to save file'];
 }
 
+// sendNotification function already defined above
+
 function getFaultCategoryName($category) {
     $categories = FAULT_CATEGORIES;
     return isset($categories[$category]) ? $categories[$category] : 'Unknown';
@@ -139,64 +141,115 @@ function getStatusBadgeClass($status) {
     return isset($classes[$status]) ? $classes[$status] : 'bg-secondary';
 }
 
-function getPriorityBadgeClass($priority) {
-    $classes = [
-        'low' => 'bg-success',
-        'medium' => 'bg-warning',
-        'high' => 'bg-danger',
-        'urgent' => 'bg-danger'
-    ];
-    return isset($classes[$priority]) ? $classes[$priority] : 'bg-secondary';
-}
-
-function formatFileSize($bytes) {
-    $units = ['B', 'KB', 'MB', 'GB'];
-    $i = 0;
-    while ($bytes >= 1024 && $i < count($units) - 1) {
-        $bytes /= 1024;
-        $i++;
+function logActivity($user_id, $action, $details = '') {
+    global $db;
+    
+    try {
+        $db->insert(
+            "INSERT INTO activity_logs (user_id, action, details, created_at) VALUES (?, ?, ?, NOW())",
+            [$user_id, $action, $details]
+        );
+    } catch (Exception $e) {
+        error_log("Activity log error: " . $e->getMessage());
     }
-    return round($bytes, 2) . ' ' . $units[$i];
 }
 
-function isValidFaultCategory($category) {
-    return array_key_exists($category, FAULT_CATEGORIES);
-}
-
-function isValidFaultStatus($status) {
-    return array_key_exists($status, FAULT_STATUSES);
-}
-
-function isValidDepartment($department) {
-    return array_key_exists($department, DEPARTMENTS);
+function generateReport($type, $params = []) {
+    global $db;
+    
+    switch ($type) {
+        case 'monthly_summary':
+            return $db->select(
+                "SELECT 
+                    DATE_FORMAT(created_at, '%Y-%m') as month,
+                    COUNT(*) as total_faults,
+                    SUM(CASE WHEN status = 'resolved' THEN 1 ELSE 0 END) as resolved_faults,
+                    SUM(CASE WHEN status = 'closed' THEN 1 ELSE 0 END) as closed_faults
+                FROM fault_reports 
+                WHERE created_at >= DATE_SUB(NOW(), INTERVAL 12 MONTH)
+                GROUP BY DATE_FORMAT(created_at, '%Y-%m')
+                ORDER BY month DESC"
+            );
+            
+        case 'department_performance':
+            return $db->select(
+                "SELECT 
+                    assigned_department,
+                    COUNT(*) as total_assigned,
+                    SUM(CASE WHEN status = 'resolved' THEN 1 ELSE 0 END) as resolved_count,
+                    AVG(DATEDIFF(updated_at, created_at)) as avg_resolution_days
+                FROM fault_reports 
+                WHERE assigned_department IS NOT NULL
+                GROUP BY assigned_department"
+            );
+            
+        case 'category_breakdown':
+            return $db->select(
+                "SELECT 
+                    category,
+                    COUNT(*) as fault_count,
+                    SUM(CASE WHEN status = 'resolved' THEN 1 ELSE 0 END) as resolved_count
+                FROM fault_reports 
+                GROUP BY category 
+                ORDER BY fault_count DESC"
+            );
+            
+        default:
+            return [];
+    }
 }
 
 function getPriorityLevel($category, $description) {
-    // Auto-assign priority based on category and keywords
-    $high_priority_keywords = ['urgent', 'emergency', 'burst', 'flooding', 'danger', 'accident'];
-    $medium_priority_keywords = ['broken', 'damaged', 'not working', 'problem'];
-    
+    $high_priority_keywords = ['emergency', 'urgent', 'dangerous', 'burst', 'flood', 'fire'];
     $description_lower = strtolower($description);
     
-    // Check for high priority keywords
     foreach ($high_priority_keywords as $keyword) {
         if (strpos($description_lower, $keyword) !== false) {
             return 'high';
         }
     }
     
-    // Check for medium priority keywords
-    foreach ($medium_priority_keywords as $keyword) {
-        if (strpos($description_lower, $keyword) !== false) {
-            return 'medium';
-        }
-    }
-    
-    // Category-based priority
-    if (in_array($category, ['water', 'electricity'])) {
+    $high_priority_categories = ['water', 'electricity'];
+    if (in_array($category, $high_priority_categories)) {
         return 'medium';
     }
     
     return 'low';
+}
+
+function getLocationCoordinates($address) {
+    // This would integrate with a geocoding service
+    // For now, return dummy coordinates for Redcliff
+    return [
+        'latitude' => -19.0389,
+        'longitude' => 29.7868
+    ];
+}
+
+function exportToCSV($data, $filename) {
+    header('Content-Type: text/csv');
+    header('Content-Disposition: attachment; filename="' . $filename . '"');
+    
+    $output = fopen('php://output', 'w');
+    
+    if (!empty($data)) {
+        fputcsv($output, array_keys($data[0]));
+        foreach ($data as $row) {
+            fputcsv($output, $row);
+        }
+    }
+    
+    fclose($output);
+}
+
+function validateCSRF($token) {
+    return isset($_SESSION['csrf_token']) && hash_equals($_SESSION['csrf_token'], $token);
+}
+
+function generateCSRF() {
+    if (!isset($_SESSION['csrf_token'])) {
+        $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+    }
+    return $_SESSION['csrf_token'];
 }
 ?>
