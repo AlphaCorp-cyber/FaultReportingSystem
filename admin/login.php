@@ -1,17 +1,19 @@
 <?php
-$page_title = 'Login';
+$page_title = 'Admin Login';
 require_once '../config/config.php';
 require_once '../includes/functions.php';
 
-// Redirect if already logged in
+// Redirect if already logged in as admin
 if (isLoggedIn()) {
     $user = getCurrentUser();
     if ($user['role'] === 'admin') {
-        header('Location: ../admin/dashboard.php');
+        header('Location: dashboard.php');
+        exit();
     } else {
-        header('Location: ../resident/dashboard.php');
+        // If logged in as resident, logout first
+        session_destroy();
+        session_start();
     }
-    exit();
 }
 
 $error = '';
@@ -25,20 +27,38 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } elseif (!validateEmail($email)) {
         $error = 'Please enter a valid email address';
     } else {
-        if ($auth->login($email, $password)) {
-            $user = getCurrentUser();
-            logActivity($user['id'], 'login', 'User logged in successfully');
-            
-            if ($user['role'] === 'admin') {
-                header('Location: ../admin/dashboard.php');
-            } else {
-                header('Location: ../resident/dashboard.php');
+        // Check if user exists and is admin
+        $user = $db->selectOne(
+            "SELECT * FROM users WHERE email = ? AND is_active = true AND role = 'admin'", 
+            [$email]
+        );
+        
+        if ($user && password_verify($password, $user['password_hash'])) {
+            // Update last login
+            try {
+                $db->update(
+                    "UPDATE users SET updated_at = NOW() WHERE id = ?",
+                    [$user['id']]
+                );
+            } catch (Exception $e) {
+                // Continue if update fails
             }
+            
+            // Create session
+            $_SESSION['user_id'] = $user['id'];
+            $_SESSION['user_email'] = $user['email'];
+            $_SESSION['user_role'] = $user['role'];
+            $_SESSION['user_name'] = $user['first_name'] . ' ' . $user['last_name'];
+            $_SESSION['login_time'] = time();
+            
+            logActivity($user['id'], 'admin_login', 'Admin user logged in successfully');
+            
+            header('Location: dashboard.php');
             exit();
         } else {
-            $error = 'Invalid resident credentials';
+            $error = 'Invalid admin credentials';
             // Log failed login attempt
-            error_log("Failed resident login attempt for email: $email from IP: " . $_SERVER['REMOTE_ADDR']);
+            error_log("Failed admin login attempt for email: $email from IP: " . $_SERVER['REMOTE_ADDR']);
         }
     }
 }
@@ -52,9 +72,9 @@ include '../includes/header.php';
             <div class="card shadow">
                 <div class="card-body">
                     <div class="text-center mb-4">
-                        <i class="fas fa-user-circle fa-3x text-primary mb-2"></i>
-                        <h4>Resident Login</h4>
-                        <p class="text-muted">Access your resident account</p>
+                        <i class="fas fa-user-shield fa-3x text-danger mb-2"></i>
+                        <h4>Admin Login</h4>
+                        <p class="text-muted">Administrative Access Portal</p>
                     </div>
                     
                     <?php if (!empty($error)): ?>
@@ -66,7 +86,7 @@ include '../includes/header.php';
                     
                     <form method="POST" action="">
                         <div class="mb-3">
-                            <label for="email" class="form-label">Email Address</label>
+                            <label for="email" class="form-label">Admin Email Address</label>
                             <div class="input-group">
                                 <span class="input-group-text">
                                     <i class="fas fa-envelope"></i>
@@ -90,47 +110,27 @@ include '../includes/header.php';
                             </div>
                         </div>
                         
-                        <div class="mb-3 form-check">
-                            <input type="checkbox" class="form-check-input" id="remember">
-                            <label class="form-check-label" for="remember">
-                                Remember me
-                            </label>
-                        </div>
-                        
-                        <button type="submit" class="btn btn-primary w-100">
-                            <i class="fas fa-sign-in-alt me-2"></i>Login
+                        <button type="submit" class="btn btn-danger w-100">
+                            <i class="fas fa-sign-in-alt me-2"></i>Admin Login
                         </button>
                     </form>
                     
                     <div class="text-center mt-3">
-                        <a href="register.php" class="text-decoration-none">
-                            Don't have an account? Register here
+                        <a href="../auth/login.php" class="text-decoration-none">
+                            <i class="fas fa-users me-1"></i>
+                            Resident Login Portal
                         </a>
-                    </div>
-                    
-                    <div class="text-center mt-2">
-                        <a href="../admin/login.php" class="text-decoration-none">
-                            <i class="fas fa-user-shield me-1"></i>
-                            Admin Login Portal
-                        </a>
-                    </div>
-                    
-                    <div class="text-center mt-3">
-                        <small class="text-muted">
-                            <i class="fas fa-info-circle me-1"></i>
-                            Only verified residents can register
-                        </small>
                     </div>
                 </div>
             </div>
             
-            <!-- Demo Credentials -->
+            <!-- Demo Admin Credentials -->
             <div class="card mt-3">
                 <div class="card-body">
-                    <h6 class="card-title">Demo Resident Credentials</h6>
+                    <h6 class="card-title">Demo Admin Credentials</h6>
                     <div class="text-center">
-                        <strong>Email:</strong> john.doe@example.com<br>
-                        <strong>Password:</strong> resident123
+                        <strong>Email:</strong> admin@redcliff.gov.zw<br>
+                        <strong>Password:</strong> admin123
                     </div>
                 </div>
             </div>

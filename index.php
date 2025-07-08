@@ -24,8 +24,17 @@ include 'includes/header.php';
                 <h2 class="h3 mb-4">Fault Reporting System</h2>
                 <p class="lead mb-4">Report infrastructure issues quickly and efficiently. Track your submissions and get real-time updates on repairs.</p>
                 <div class="d-flex gap-3">
-                    <a href="auth/login.php" class="btn btn-light btn-lg">Login</a>
-                    <a href="auth/register.php" class="btn btn-outline-light btn-lg">Register</a>
+                    <a href="auth/login.php" class="btn btn-light btn-lg">
+                        <i class="fas fa-user me-2"></i>Resident Login
+                    </a>
+                    <a href="admin/login.php" class="btn btn-outline-light btn-lg">
+                        <i class="fas fa-user-shield me-2"></i>Admin Login
+                    </a>
+                </div>
+                <div class="mt-3">
+                    <a href="auth/register.php" class="btn btn-outline-light">
+                        <i class="fas fa-user-plus me-2"></i>Register as Resident
+                    </a>
                 </div>
             </div>
             <div class="col-lg-6">

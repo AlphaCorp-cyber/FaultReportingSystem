@@ -21,9 +21,10 @@ The system aims to enhance municipal service delivery through improved accountab
 - **Authentication**: Payment record verification system to ensure only rate-paying residents can submit reports
 
 ### Data Storage
-- **Database**: Relational database (specific implementation not shown in current files)
-- **Data Types**: Fault reports, user authentication data, payment records, file attachments
-- **Storage**: Centralized database for all system data with file storage for attachments
+- **Database**: PostgreSQL relational database with proper indexing and constraints
+- **Data Types**: Fault reports, user authentication data, payment records, file attachments, notifications, activity logs
+- **Storage**: Centralized database for all system data with secure file storage for attachments
+- **Security**: Prepared statements to prevent SQL injection, proper password hashing
 
 ## Key Components
 
@@ -33,8 +34,10 @@ The system aims to enhance municipal service delivery through improved accountab
 - **Validation**: Client-side and server-side validation for data integrity
 
 ### 2. User Authentication System
+- **Dual Login Portals**: Separate login interfaces for administrators (`/admin/login.php`) and residents (`/auth/login.php`)
+- **Role-Based Access**: Admin users have access to management functions, residents can only report and track faults
 - **Verification Method**: Payment record validation ensures only paying residents can report faults
-- **Security**: Prevents unauthorized access and spam reports
+- **Security**: Prevents unauthorized access and spam reports with proper password hashing
 - **Integration**: Links with municipal payment systems
 
 ### 3. Staff Management Dashboard
@@ -93,7 +96,11 @@ The system aims to enhance municipal service delivery through improved accountab
 
 ## Changelog
 
-- July 08, 2025. Initial setup and migration to Replit completed
+- July 08, 2025. Initial setup
+- July 08, 2025. Successfully migrated from Replit Agent to standard Replit environment
+- July 08, 2025. Implemented separate admin and resident login portals
+- July 08, 2025. Added PostgreSQL database integration with proper security measures
+- July 08, 2025. Fixed authentication system with role-based access control and migration to Replit completed
   - PostgreSQL database configured and populated with schema
   - Authentication system fixed with proper path handling
   - All core functionality tested and working
