@@ -22,7 +22,7 @@ body {
     background-color: #f8f9fa;
 }
 
-/* Ensure text contrast */
+/* Ensure text contrast for all elements */
 .text-dark {
     color: #212529 !important;
 }
@@ -35,9 +35,10 @@ body {
     color: #6c757d !important;
 }
 
-/* Card text colors */
+/* Card text colors - ensure proper contrast */
 .card {
     color: #212529;
+    background-color: #fff;
 }
 
 .card-header {
@@ -47,6 +48,120 @@ body {
 
 .card-body {
     color: #212529;
+    background-color: #fff;
+}
+
+/* Colored cards with proper text contrast */
+.card.bg-primary {
+    color: #fff !important;
+}
+
+.card.bg-primary .card-body {
+    color: #fff !important;
+}
+
+.card.bg-primary h1, .card.bg-primary h2, .card.bg-primary h3, .card.bg-primary h4, .card.bg-primary h5, .card.bg-primary h6 {
+    color: #fff !important;
+}
+
+.card.bg-primary p, .card.bg-primary small {
+    color: #fff !important;
+}
+
+.card.bg-success {
+    color: #fff !important;
+}
+
+.card.bg-success .card-body {
+    color: #fff !important;
+}
+
+.card.bg-success h1, .card.bg-success h2, .card.bg-success h3, .card.bg-success h4, .card.bg-success h5, .card.bg-success h6 {
+    color: #fff !important;
+}
+
+.card.bg-success p, .card.bg-success small {
+    color: #fff !important;
+}
+
+.card.bg-info {
+    color: #fff !important;
+}
+
+.card.bg-info .card-body {
+    color: #fff !important;
+}
+
+.card.bg-info h1, .card.bg-info h2, .card.bg-info h3, .card.bg-info h4, .card.bg-info h5, .card.bg-info h6 {
+    color: #fff !important;
+}
+
+.card.bg-info p, .card.bg-info small {
+    color: #fff !important;
+}
+
+.card.bg-warning {
+    color: #212529 !important;
+}
+
+.card.bg-warning .card-body {
+    color: #212529 !important;
+}
+
+.card.bg-warning h1, .card.bg-warning h2, .card.bg-warning h3, .card.bg-warning h4, .card.bg-warning h5, .card.bg-warning h6 {
+    color: #212529 !important;
+}
+
+.card.bg-warning p, .card.bg-warning small {
+    color: #212529 !important;
+}
+
+.card.bg-danger {
+    color: #fff !important;
+}
+
+.card.bg-danger .card-body {
+    color: #fff !important;
+}
+
+.card.bg-danger h1, .card.bg-danger h2, .card.bg-danger h3, .card.bg-danger h4, .card.bg-danger h5, .card.bg-danger h6 {
+    color: #fff !important;
+}
+
+.card.bg-danger p, .card.bg-danger small {
+    color: #fff !important;
+}
+
+.card.bg-secondary {
+    color: #fff !important;
+}
+
+.card.bg-secondary .card-body {
+    color: #fff !important;
+}
+
+.card.bg-secondary h1, .card.bg-secondary h2, .card.bg-secondary h3, .card.bg-secondary h4, .card.bg-secondary h5, .card.bg-secondary h6 {
+    color: #fff !important;
+}
+
+.card.bg-secondary p, .card.bg-secondary small {
+    color: #fff !important;
+}
+
+.card.bg-dark {
+    color: #fff !important;
+}
+
+.card.bg-dark .card-body {
+    color: #fff !important;
+}
+
+.card.bg-dark h1, .card.bg-dark h2, .card.bg-dark h3, .card.bg-dark h4, .card.bg-dark h5, .card.bg-dark h6 {
+    color: #fff !important;
+}
+
+.card.bg-dark p, .card.bg-dark small {
+    color: #fff !important;
 }
 
 /* Table text colors */
@@ -63,7 +178,7 @@ body {
     color: #212529;
 }
 
-/* Badge text colors */
+/* Badge text colors with proper contrast */
 .badge {
     color: #fff;
 }
@@ -74,6 +189,30 @@ body {
 
 .badge.bg-warning {
     color: #212529 !important;
+}
+
+.badge.bg-info {
+    color: #fff !important;
+}
+
+.badge.bg-primary {
+    color: #fff !important;
+}
+
+.badge.bg-success {
+    color: #fff !important;
+}
+
+.badge.bg-danger {
+    color: #fff !important;
+}
+
+.badge.bg-secondary {
+    color: #fff !important;
+}
+
+.badge.bg-dark {
+    color: #fff !important;
 }
 
 /* Button text colors */
@@ -92,19 +231,33 @@ body {
 /* Dropdown text colors */
 .dropdown-menu {
     color: #212529;
+    background-color: #fff;
 }
 
 .dropdown-item {
     color: #212529;
 }
 
+.dropdown-item:hover {
+    color: #212529;
+    background-color: #f8f9fa;
+}
+
 /* Navbar text colors */
 .navbar-dark .navbar-nav .nav-link {
-    color: #f8f9fa;
+    color: #f8f9fa !important;
 }
 
 .navbar-dark .navbar-brand {
-    color: #f8f9fa;
+    color: #f8f9fa !important;
+}
+
+.navbar-light .navbar-nav .nav-link {
+    color: #212529 !important;
+}
+
+.navbar-light .navbar-brand {
+    color: #212529 !important;
 }
 
 /* Footer text colors */
@@ -112,21 +265,94 @@ footer {
     color: #f8f9fa;
 }
 
-/* Alert text colors */
+/* Alert text colors with proper contrast */
 .alert-danger {
     color: #721c24;
+    background-color: #f8d7da;
 }
 
 .alert-success {
     color: #155724;
+    background-color: #d4edda;
 }
 
 .alert-warning {
     color: #856404;
+    background-color: #fff3cd;
 }
 
 .alert-info {
     color: #0c5460;
+    background-color: #cce8f4;
+}
+
+/* Text colors for different backgrounds */
+.bg-primary, .bg-success, .bg-info, .bg-danger, .bg-secondary, .bg-dark {
+    color: #fff !important;
+}
+
+.bg-warning, .bg-light {
+    color: #212529 !important;
+}
+
+/* Ensure form elements have proper contrast */
+.form-control {
+    color: #212529;
+    background-color: #fff;
+}
+
+.form-control:focus {
+    color: #212529;
+    background-color: #fff;
+}
+
+.form-select {
+    color: #212529;
+    background-color: #fff;
+}
+
+.form-select:focus {
+    color: #212529;
+    background-color: #fff;
+}
+
+/* Hero section text */
+.hero-section {
+    color: #fff !important;
+}
+
+.hero-section h1, .hero-section h2, .hero-section h3, .hero-section h4, .hero-section h5, .hero-section h6 {
+    color: #fff !important;
+}
+
+.hero-section p, .hero-section small {
+    color: #fff !important;
+}
+
+/* Timeline text colors */
+.timeline-item {
+    color: #212529;
+}
+
+/* Modal text colors */
+.modal-content {
+    color: #212529;
+    background-color: #fff;
+}
+
+.modal-header {
+    color: #212529;
+    background-color: #f8f9fa;
+}
+
+.modal-body {
+    color: #212529;
+    background-color: #fff;
+}
+
+.modal-footer {
+    color: #212529;
+    background-color: #f8f9fa;
 }
 
 /* Navigation */
@@ -714,6 +940,57 @@ footer {
     }
 }
 
+/* Text color inheritance for all elements */
+.text-white {
+    color: #fff !important;
+}
+
+.text-black {
+    color: #212529 !important;
+}
+
+/* Ensure proper text color inheritance */
+* {
+    color: inherit;
+}
+
+/* Override for specific elements that need different colors */
+.card .text-light {
+    color: #f8f9fa !important;
+}
+
+.card .text-white {
+    color: #fff !important;
+}
+
+.card .text-muted {
+    color: #6c757d !important;
+}
+
+.card.bg-primary .text-muted {
+    color: rgba(255, 255, 255, 0.7) !important;
+}
+
+.card.bg-success .text-muted {
+    color: rgba(255, 255, 255, 0.7) !important;
+}
+
+.card.bg-info .text-muted {
+    color: rgba(255, 255, 255, 0.7) !important;
+}
+
+.card.bg-danger .text-muted {
+    color: rgba(255, 255, 255, 0.7) !important;
+}
+
+.card.bg-secondary .text-muted {
+    color: rgba(255, 255, 255, 0.7) !important;
+}
+
+.card.bg-dark .text-muted {
+    color: rgba(255, 255, 255, 0.7) !important;
+}
+
 /* Dark Mode Support */
 @media (prefers-color-scheme: dark) {
     :root {
@@ -735,6 +1012,17 @@ footer {
     .card {
         background-color: #2d3436;
         border-color: #636e72;
+        color: #f8f9fa;
+    }
+    
+    .card-header {
+        background-color: #636e72;
+        color: #f8f9fa;
+    }
+    
+    .card-body {
+        background-color: #2d3436;
+        color: #f8f9fa;
     }
     
     .table {
@@ -744,6 +1032,10 @@ footer {
     
     .table th {
         background-color: #636e72;
+        color: #f8f9fa;
+    }
+    
+    .table td {
         color: #f8f9fa;
     }
     
@@ -766,9 +1058,25 @@ footer {
         color: #f8f9fa;
     }
     
+    .modal-header {
+        background-color: #636e72;
+        color: #f8f9fa;
+    }
+    
+    .modal-body {
+        background-color: #2d3436;
+        color: #f8f9fa;
+    }
+    
+    .modal-footer {
+        background-color: #636e72;
+        color: #f8f9fa;
+    }
+    
     .dropdown-menu {
         background-color: #2d3436;
         border-color: #636e72;
+        color: #f8f9fa;
     }
     
     .dropdown-item {
@@ -777,5 +1085,6 @@ footer {
     
     .dropdown-item:hover {
         background-color: #636e72;
+        color: #f8f9fa;
     }
 }

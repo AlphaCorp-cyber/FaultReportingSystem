@@ -140,7 +140,7 @@ include '../includes/header.php';
                 <div class="card-body">
                     <div class="d-flex justify-content-between">
                         <div>
-                            <h4 class="mb-1"><?php echo round(($performance_metrics['resolved_within_3_days'] / $performance_metrics['total_processed']) * 100, 1); ?>%</h4>
+                            <h4 class="mb-1"><?php echo $performance_metrics['total_processed'] > 0 ? round(($performance_metrics['resolved_within_3_days'] / $performance_metrics['total_processed']) * 100, 1) : 0; ?>%</h4>
                             <p class="mb-0">Resolved Within 3 Days</p>
                         </div>
                         <div class="align-self-center">
