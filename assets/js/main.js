@@ -592,9 +592,272 @@ const ChartManager = {
     }
 };
 
+// Landing page enhancements
+const LandingPageEnhancements = {
+    init: function() {
+        this.initScrollAnimations();
+        this.initSmoothScrolling();
+        this.initParallaxEffects();
+        this.initCounterAnimations();
+        this.initTypingEffect();
+    },
+    
+    // Initialize scroll animations
+    initScrollAnimations: function() {
+        // Intersection Observer for scroll animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animated');
+                    
+                    // Add stagger effect for cards
+                    const cards = entry.target.querySelectorAll('.feature-card, .category-card, .testimonial-card');
+                    cards.forEach((card, index) => {
+                        setTimeout(() => {
+                            card.style.animationDelay = `${index * 0.1}s`;
+                            card.classList.add('animate-on-scroll');
+                        }, index * 100);
+                    });
+                }
+            });
+        }, observerOptions);
+        
+        // Observe all animation elements
+        document.querySelectorAll('.animate-on-scroll').forEach(el => {
+            observer.observe(el);
+        });
+        
+        // Observe sections for animations
+        document.querySelectorAll('.features-section, .how-it-works-section, .categories-section, .testimonials-section').forEach(section => {
+            observer.observe(section);
+        });
+    },
+    
+    // Initialize smooth scrolling
+    initSmoothScrolling: function() {
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    },
+    
+    // Initialize parallax effects
+    initParallaxEffects: function() {
+        let ticking = false;
+        
+        function updateParallax() {
+            const scrollTop = window.pageYOffset;
+            
+            // Hero parallax
+            const heroSection = document.querySelector('.hero-section');
+            if (heroSection) {
+                const heroOffset = scrollTop * 0.5;
+                heroSection.style.transform = `translateY(${heroOffset}px)`;
+            }
+            
+            // Floating shapes
+            const shapes = document.querySelectorAll('.shape');
+            shapes.forEach((shape, index) => {
+                const speed = (index + 1) * 0.1;
+                const yPos = scrollTop * speed;
+                shape.style.transform = `translateY(${yPos}px)`;
+            });
+            
+            ticking = false;
+        }
+        
+        function requestTick() {
+            if (!ticking) {
+                requestAnimationFrame(updateParallax);
+                ticking = true;
+            }
+        }
+        
+        window.addEventListener('scroll', requestTick);
+    },
+    
+    // Initialize counter animations
+    initCounterAnimations: function() {
+        const counters = document.querySelectorAll('.stat-item h3');
+        const speed = 200; // Animation speed
+        
+        const observerOptions = {
+            threshold: 0.5
+        };
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const counter = entry.target;
+                    const target = counter.getAttribute('data-target') || counter.textContent;
+                    const count = target.replace(/[^0-9]/g, '');
+                    const suffix = target.replace(/[0-9]/g, '');
+                    
+                    if (count) {
+                        this.animateCounter(counter, 0, parseInt(count), speed, suffix);
+                    }
+                }
+            });
+        }, observerOptions);
+        
+        counters.forEach(counter => {
+            observer.observe(counter);
+        });
+    },
+    
+    // Animate counter
+    animateCounter: function(element, start, end, duration, suffix = '') {
+        const range = end - start;
+        const increment = range / (duration / 16);
+        let current = start;
+        
+        const timer = setInterval(() => {
+            current += increment;
+            if (current >= end) {
+                current = end;
+                clearInterval(timer);
+            }
+            
+            element.textContent = Math.floor(current) + suffix;
+        }, 16);
+    },
+    
+    // Initialize typing effect
+    initTypingEffect: function() {
+        const typingElements = document.querySelectorAll('.typing-effect');
+        
+        typingElements.forEach(element => {
+            const text = element.textContent;
+            element.textContent = '';
+            
+            let i = 0;
+            const typeWriter = () => {
+                if (i < text.length) {
+                    element.textContent += text.charAt(i);
+                    i++;
+                    setTimeout(typeWriter, 100);
+                }
+            };
+            
+            // Start typing when element is visible
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        typeWriter();
+                        observer.unobserve(element);
+                    }
+                });
+            });
+            
+            observer.observe(element);
+        });
+    }
+};
+
+// Enhanced category card interactions
+const CategoryInteractions = {
+    init: function() {
+        this.initCategoryCards();
+        this.initTestimonialCarousel();
+        this.initFeatureHovers();
+    },
+    
+    initCategoryCards: function() {
+        const categoryCards = document.querySelectorAll('.category-card');
+        
+        categoryCards.forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-10px) scale(1.05)';
+                this.style.boxShadow = '0 20px 40px rgba(0, 0, 0, 0.15)';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0) scale(1)';
+                this.style.boxShadow = '0 2px 4px rgba(0, 0, 0, 0.1)';
+            });
+            
+            card.addEventListener('click', function() {
+                // Add click animation
+                this.style.transform = 'translateY(-10px) scale(0.95)';
+                setTimeout(() => {
+                    this.style.transform = 'translateY(-10px) scale(1.05)';
+                }, 150);
+            });
+        });
+    },
+    
+    initTestimonialCarousel: function() {
+        const testimonialCards = document.querySelectorAll('.testimonial-card');
+        let currentIndex = 0;
+        
+        function showNextTestimonial() {
+            testimonialCards.forEach((card, index) => {
+                card.style.opacity = index === currentIndex ? '1' : '0.7';
+                card.style.transform = index === currentIndex ? 'scale(1)' : 'scale(0.95)';
+            });
+            
+            currentIndex = (currentIndex + 1) % testimonialCards.length;
+        }
+        
+        // Auto-rotate testimonials
+        setInterval(showNextTestimonial, 5000);
+    },
+    
+    initFeatureHovers: function() {
+        const featureCards = document.querySelectorAll('.feature-card');
+        
+        featureCards.forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                const icon = this.querySelector('.icon-circle');
+                if (icon) {
+                    icon.style.transform = 'scale(1.1) rotate(5deg)';
+                }
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                const icon = this.querySelector('.icon-circle');
+                if (icon) {
+                    icon.style.transform = 'scale(1) rotate(0deg)';
+                }
+            });
+        });
+    }
+};
+
 // Initialize when document is ready
 $(document).ready(function() {
     RedcliffApp.init();
+    LandingPageEnhancements.init();
+    CategoryInteractions.init();
+    
+    // Add loading animation
+    $('body').addClass('loaded');
+    
+    // Add smooth page transitions
+    $('a').not('[href^="#"]').not('[href^="javascript:"]').click(function(e) {
+        const href = $(this).attr('href');
+        if (href && !e.ctrlKey && !e.metaKey) {
+            e.preventDefault();
+            $('body').addClass('page-transition');
+            setTimeout(() => {
+                window.location.href = href;
+            }, 300);
+        }
+    });
 });
 
 // Global functions for backward compatibility
