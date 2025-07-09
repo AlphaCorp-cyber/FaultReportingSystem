@@ -1,3 +1,9 @@
+<?php
+// Ensure output buffering is started
+if (!ob_get_level()) {
+    ob_start();
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
