@@ -1,9 +1,13 @@
 <?php
 // Start output buffering to prevent header issues
-ob_start();
+if (!ob_get_level()) {
+    ob_start();
+}
 
-// Start session
-session_start();
+// Start session only if not already started
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
 // Database configuration
 define('DB_HOST', getenv('PGHOST') ?: 'localhost');
