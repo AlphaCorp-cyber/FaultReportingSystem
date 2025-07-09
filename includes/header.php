@@ -3,9 +3,6 @@
 if (!ob_get_level()) {
     ob_start();
 }
-if (!ob_get_level()) {
-    ob_start();
-}
 ?>
 <!DOCTYPE html>
 <html lang="en">
