@@ -1,11 +1,11 @@
 <?php
 // Start output buffering to prevent header issues
-if (!ob_get_level()) {
+if (!headers_sent() && !ob_get_level()) {
     ob_start();
 }
 
-// Start session only if not already started
-if (session_status() === PHP_SESSION_NONE) {
+// Start session only if not already started and headers not sent
+if (!headers_sent() && session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 

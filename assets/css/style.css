@@ -395,10 +395,13 @@ footer {
 
 /* Cards */
 .card {
-    border: none;
+    border: 1px solid #dee2e6;
     border-radius: var(--border-radius);
     box-shadow: var(--box-shadow);
     transition: var(--transition);
+    background-color: #fff !important;
+    opacity: 1 !important;
+    visibility: visible !important;
 }
 
 .card:hover {
@@ -407,9 +410,15 @@ footer {
 }
 
 .card-header {
-    background-color: #fff;
+    background-color: #f8f9fa !important;
     border-bottom: 1px solid #dee2e6;
     font-weight: 600;
+    color: #212529 !important;
+}
+
+.card-body {
+    background-color: #fff !important;
+    color: #212529 !important;
 }
 
 /* Buttons */
@@ -649,6 +658,34 @@ footer {
     100% { transform: rotate(360deg); }
 }
 
+/* Section backgrounds fix */
+.features-section {
+    background-color: #f8f9fa !important;
+}
+
+.categories-section {
+    background-color: #f8f9fa !important;
+}
+
+.testimonials-section {
+    background-color: #fff !important;
+}
+
+.contact-section {
+    background-color: #f8f9fa !important;
+}
+
+.how-it-works-section {
+    background-color: #fff !important;
+}
+
+/* Ensure all cards are visible */
+.card, .feature-card, .category-card, .testimonial-card, .step-card {
+    display: block !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
     .hero-section .display-4 {
@@ -846,11 +883,20 @@ footer {
     transition: all 0.3s ease;
     border-radius: 15px;
     overflow: hidden;
+    background-color: #fff !important;
+    border: 1px solid #e9ecef !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    min-height: 200px;
 }
 
 .feature-card:hover {
     transform: translateY(-10px);
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+}
+
+.feature-card .card-body {
+    padding: 2rem !important;
 }
 
 .feature-icon .icon-circle {
@@ -888,15 +934,26 @@ footer {
     position: relative;
     padding: 2rem;
     border-radius: 20px;
-    background: rgba(255, 255, 255, 0.05);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: #fff !important;
+    border: 1px solid #e9ecef !important;
     transition: all 0.3s ease;
+    opacity: 1 !important;
+    visibility: visible !important;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    min-height: 250px;
 }
 
 .step-card:hover {
     transform: translateY(-5px);
-    background: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+}
+
+.step-card h5 {
+    color: #212529 !important;
+}
+
+.step-card p {
+    color: #6c757d !important;
 }
 
 .step-number {
@@ -926,13 +983,37 @@ footer {
     transition: all 0.3s ease;
     border-radius: 15px;
     cursor: pointer;
-    border: 2px solid transparent;
+    border: 2px solid #e9ecef !important;
+    background-color: #fff !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    min-height: 120px;
+    display: flex !important;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }
 
 .category-card:hover {
     transform: translateY(-5px);
     box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
-    border-color: #667eea;
+    border-color: #667eea !important;
+}
+
+.category-card .category-icon {
+    margin-bottom: 0.75rem;
+}
+
+.category-card h6 {
+    color: #212529 !important;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.category-card p {
+    color: #6c757d !important;
+    font-size: 0.875rem;
+    text-align: center;
 }
 
 .category-icon {
@@ -949,6 +1030,10 @@ footer {
     position: relative;
     overflow: hidden;
     transition: all 0.3s ease;
+    background-color: #fff !important;
+    border: 1px solid #e9ecef !important;
+    opacity: 1 !important;
+    visibility: visible !important;
 }
 
 .testimonial-card::before {
@@ -959,11 +1044,19 @@ footer {
     right: 0;
     height: 4px;
     background: linear-gradient(90deg, #667eea, #764ba2);
+    z-index: 1;
 }
 
 .testimonial-card:hover {
     transform: translateY(-5px);
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+}
+
+.testimonial-card .card-body {
+    position: relative;
+    z-index: 2;
+    background-color: #fff !important;
+    color: #212529 !important;
 }
 
 .author-avatar .avatar-circle {

@@ -615,9 +615,14 @@ const LandingPageEnhancements = {
                 if (entry.isIntersecting) {
                     entry.target.classList.add('animated');
                     
-                    // Add stagger effect for cards
-                    const cards = entry.target.querySelectorAll('.feature-card, .category-card, .testimonial-card');
+                    // Ensure cards are visible and add stagger effect
+                    const cards = entry.target.querySelectorAll('.feature-card, .category-card, .testimonial-card, .step-card');
                     cards.forEach((card, index) => {
+                        // Ensure card is visible
+                        card.style.opacity = '1';
+                        card.style.visibility = 'visible';
+                        card.style.display = 'block';
+                        
                         setTimeout(() => {
                             card.style.animationDelay = `${index * 0.1}s`;
                             card.classList.add('animate-on-scroll');
@@ -843,6 +848,15 @@ $(document).ready(function() {
     RedcliffApp.init();
     LandingPageEnhancements.init();
     CategoryInteractions.init();
+    
+    // Ensure all cards are visible on load
+    $('.card, .feature-card, .category-card, .testimonial-card, .step-card').each(function() {
+        $(this).css({
+            'opacity': '1',
+            'visibility': 'visible',
+            'display': 'block'
+        });
+    });
     
     // Add loading animation
     $('body').addClass('loaded');
