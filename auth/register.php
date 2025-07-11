@@ -26,13 +26,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         'confirm_password' => $_POST['confirm_password'],
         'phone' => sanitizeInput($_POST['phone']),
         'address' => sanitizeInput($_POST['address']),
-        'account_number' => sanitizeInput($_POST['account_number']),
-        'id_number' => sanitizeInput($_POST['id_number'])
+
     ];
     
     // Validation
     if (empty($data['first_name']) || empty($data['last_name']) || empty($data['email']) || 
-        empty($data['password']) || empty($data['account_number']) || empty($data['id_number'])) {
+        empty($data['password'])) {
         $error = 'Please fill in all required fields';
     } elseif (!validateEmail($data['email'])) {
         $error = 'Please enter a valid email address';
@@ -120,29 +119,7 @@ include '../includes/header.php';
                                       placeholder="Your residential address"><?php echo isset($_POST['address']) ? htmlspecialchars($_POST['address']) : ''; ?></textarea>
                         </div>
                         
-                        <div class="alert alert-info">
-                            <i class="fas fa-info-circle me-2"></i>
-                            <strong>Verification Required:</strong> Please provide your municipal account details for verification.
-                        </div>
-                        
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label for="account_number" class="form-label">Municipal Account Number *</label>
-                                    <input type="text" class="form-control" id="account_number" name="account_number" 
-                                           value="<?php echo isset($_POST['account_number']) ? htmlspecialchars($_POST['account_number']) : ''; ?>" 
-                                           required>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label for="id_number" class="form-label">ID Number *</label>
-                                    <input type="text" class="form-control" id="id_number" name="id_number" 
-                                           value="<?php echo isset($_POST['id_number']) ? htmlspecialchars($_POST['id_number']) : ''; ?>" 
-                                           required>
-                                </div>
-                            </div>
-                        </div>
+
                         
                         <div class="row">
                             <div class="col-md-6">

@@ -55,25 +55,19 @@ class Auth {
                 return ['success' => false, 'message' => 'Email already exists'];
             }
 
-            // Verify payment record (simplified for demo)
-            if (empty($data['payment_record_number'])) {
-                return ['success' => false, 'message' => 'Payment record number is required'];
-            }
-
             // Hash password
             $hashed_password = password_hash($data['password'], PASSWORD_DEFAULT);
 
             // Insert user
             $user_id = $this->db->insert(
-                "INSERT INTO users (first_name, last_name, email, password_hash, phone, address, payment_record_number, role, is_active) VALUES (?, ?, ?, ?, ?, ?, ?, 'resident', true)",
+                "INSERT INTO users (first_name, last_name, email, password_hash, phone, address, role, is_active) VALUES (?, ?, ?, ?, ?, ?, 'resident', true)",
                 [
                     $data['first_name'],
                     $data['last_name'],
                     $data['email'],
                     $hashed_password,
                     $data['phone'],
-                    $data['address'],
-                    $data['payment_record_number']
+                    $data['address']
                 ]
             );
 
