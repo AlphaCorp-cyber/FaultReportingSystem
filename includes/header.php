@@ -144,15 +144,5 @@ if (!ob_get_level()) {
         </div>
     <?php endif; ?>
 
-    <div class="text-center mt-2">
-        <a href="../admin/login.php" class="text-decoration-none me-3">
-            <i class="fas fa-user-shield me-1"></i>
-            Admin Login
-        </a>
-        <a href="../admin/department_login.php" class="text-decoration-none">
-            <i class="fas fa-building me-1"></i>
-            Department Login
-        </a>
-    </div>
 </body>
 </html>
