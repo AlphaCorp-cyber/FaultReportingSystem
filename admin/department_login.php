@@ -30,9 +30,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         );
         
         if ($department_user && password_verify($password, $department_user['password_hash'])) {
-            // Set session
+            // Set session (match Auth class expectations)
             $_SESSION['user_id'] = $department_user['id'];
+            $_SESSION['user_email'] = $department_user['email'];
             $_SESSION['user_role'] = $department_user['role'];
+            $_SESSION['user_name'] = $department_user['first_name'] . ' ' . $department_user['last_name'];
+            $_SESSION['login_time'] = time();
             $_SESSION['department'] = $department_user['department'];
             
             logActivity($department_user['id'], 'login', 'Department user logged in successfully');

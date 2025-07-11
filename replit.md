@@ -122,6 +122,13 @@ The system aims to enhance municipal service delivery through improved accountab
   - Updated authentication system to remove payment verification dependencies
   - All login systems working: admin@redcliff.gov.zw, department users, and resident registration
   - System fully operational and meets all requirements from project specification
+- July 11, 2025. Fixed all PHP errors and department login redirection issues
+  - Created missing activity_log table with proper PostgreSQL schema
+  - Fixed department_login.php header issues by removing empty line at start
+  - Fixed manage_users.php null value errors with proper null coalescing operators
+  - Fixed department login session compatibility with Auth class expectations
+  - Fixed department key mapping in database to match DEPARTMENTS constant
+  - All login portals now working correctly: admin, department (WATER001, ROADS001, ELEC001), and resident
 - July 11, 2025. Completed final migration to Replit environment
   - Fixed database schema with proper PostgreSQL syntax and constraints
   - Added department_code, password_hash, is_active, and department columns to users table

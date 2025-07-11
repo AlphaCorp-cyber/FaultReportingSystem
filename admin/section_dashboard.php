@@ -10,7 +10,7 @@ $user = getCurrentUser();
 
 // Check if user is department or admin
 if ($user['role'] !== 'department' && $user['role'] !== 'admin') {
-    header('Location: ../auth/login.php');
+    header('Location: ../index.php');
     exit();
 }
 
