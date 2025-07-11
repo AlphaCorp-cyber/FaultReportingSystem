@@ -108,12 +108,7 @@ include '../includes/header.php';
                         </a>
                     </div>
                     
-                    <div class="text-center mt-2">
-                        <a href="../admin/login.php" class="text-decoration-none">
-                            <i class="fas fa-user-shield me-1"></i>
-                            Admin Login Portal
-                        </a>
-                    </div>
+
                     
                     <div class="text-center mt-3">
                         <small class="text-muted">

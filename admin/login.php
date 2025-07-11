@@ -116,10 +116,10 @@ include '../includes/header.php';
                     </form>
                     
                     <div class="text-center mt-3">
-                        <a href="../auth/login.php" class="text-decoration-none">
-                            <i class="fas fa-users me-1"></i>
-                            Resident Login Portal
-                        </a>
+                        <small class="text-muted">
+                            <i class="fas fa-shield-alt me-1"></i>
+                            Administrative Access Only
+                        </small>
                     </div>
                 </div>
             </div>

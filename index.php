@@ -542,16 +542,12 @@ include 'includes/header.php';
                 </div>
             </div>
             <div class="col-lg-6">
-                <div class="admin-login-section">
-                    <h3 class="fw-bold mb-4">Municipal Staff</h3>
-                    <p class="text-muted mb-4">Access the administrative dashboard to manage reports and monitor system performance.</p>
-                    <div class="admin-buttons d-flex flex-wrap gap-3">
-                        <a href="admin/login.php" class="btn btn-outline-primary">
-                            <i class="fas fa-user-shield me-2"></i>Admin Login
-                        </a>
-                        <a href="admin/department_login.php" class="btn btn-outline-secondary">
-                            <i class="fas fa-users-cog me-2"></i>Department Login
-                        </a>
+                <div class="municipality-info">
+                    <h3 class="fw-bold mb-4">Municipality Information</h3>
+                    <p class="text-muted mb-4">For general inquiries, visit our offices during business hours or contact us through the channels above.</p>
+                    <div class="info-box bg-light p-3 rounded">
+                        <h6 class="fw-bold mb-2">Important Notice</h6>
+                        <p class="small text-muted mb-0">Only verified residents with valid payment records can submit fault reports. Make sure your municipal account is up to date.</p>
                     </div>
                 </div>
             </div>
