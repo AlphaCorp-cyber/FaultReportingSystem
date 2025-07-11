@@ -1,4 +1,3 @@
-
 <?php
 $page_title = 'Department Login';
 require_once '../config/config.php';

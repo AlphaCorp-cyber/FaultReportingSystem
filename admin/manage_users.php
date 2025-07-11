@@ -311,8 +311,8 @@ include '../includes/header.php';
                                 </td>
                                 <td>
                                     <div>
-                                        <span class="badge bg-secondary"><?php echo htmlspecialchars($user_row['account_number']); ?></span><br>
-                                        <small class="text-muted">ID: <?php echo htmlspecialchars($user_row['id_number']); ?></small>
+                                        <span class="badge bg-secondary"><?php echo htmlspecialchars($user_row['account_number'] ?? 'N/A'); ?></span><br>
+                                        <small class="text-muted">ID: <?php echo htmlspecialchars($user_row['id_number'] ?? 'N/A'); ?></small>
                                     </div>
                                 </td>
                                 <td>
