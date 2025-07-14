@@ -28,7 +28,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Check if new email already exists
         $existing = $db->selectOne("SELECT id FROM users WHERE email = ? AND id != ?", [$email, $user['id']]);
         if ($existing) {
-            $error = 'Email address already exists';
+            $error = 'Email address is already registered by another user';
+        }
+    }
+    
+    // Check for duplicate phone number (only if phone is provided and different from current)
+    if (empty($error) && !empty($phone) && $phone !== $user['phone']) {
+        $existing_phone = $db->selectOne("SELECT id FROM users WHERE phone = ? AND id != ?", [$phone, $user['id']]);
+        if ($existing_phone) {
+            $error = 'Phone number is already registered by another user';
         }
     }
     

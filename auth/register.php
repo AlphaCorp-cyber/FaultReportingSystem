@@ -34,10 +34,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $error = 'Please fill in all required fields';
     } elseif (!validateEmail($data['email'])) {
         $error = 'Please enter a valid email address';
-    } elseif (strlen($data['password']) < 6) {
-        $error = 'Password must be at least 6 characters long';
-    } elseif ($data['password'] !== $data['confirm_password']) {
-        $error = 'Passwords do not match';
+    } else {
+        // Check for duplicate email
+        $existing_email = $db->selectOne("SELECT id FROM users WHERE email = ?", [$data['email']]);
+        if ($existing_email) {
+            $error = 'Email address is already registered. Please use a different email or login if you already have an account.';
+        }
+        
+        // Check for duplicate phone number (only if phone is provided)
+        if (!empty($data['phone'])) {
+            $existing_phone = $db->selectOne("SELECT id FROM users WHERE phone = ?", [$data['phone']]);
+            if ($existing_phone) {
+                $error = 'Phone number is already registered. Please use a different phone number.';
+            }
+        }
+    }
+    
+    if (empty($error)) {
+        if (strlen($data['password']) < 6) {
+            $error = 'Password must be at least 6 characters long';
+        } elseif ($data['password'] !== $data['confirm_password']) {
+            $error = 'Passwords do not match';
     } elseif (!isset($_FILES['national_id']) || $_FILES['national_id']['error'] !== UPLOAD_ERR_OK) {
         $error = 'Please upload your national ID document';
     } elseif (!isset($_FILES['photo']) || $_FILES['photo']['error'] !== UPLOAD_ERR_OK) {

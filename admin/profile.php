@@ -14,42 +14,50 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_profile'])) {
     $last_name = sanitizeInput($_POST['last_name']);
     $email = sanitizeInput($_POST['email']);
     $phone = sanitizeInput($_POST['phone']);
-    
+
     // Validate inputs
     if (empty($first_name) || empty($last_name) || empty($email)) {
-        $_SESSION['error'] = 'Please fill in all required fields';
+        $error = 'Please fill in all required fields';
     } elseif (!validateEmail($email)) {
-        $_SESSION['error'] = 'Please enter a valid email address';
-    } else {
-        // Check if email is already taken by another user
-        $existing_user = $db->selectOne(
-            "SELECT id FROM users WHERE email = ? AND id != ?",
-            [$email, $user['id']]
-        );
-        
-        if ($existing_user) {
-            $_SESSION['error'] = 'Email address is already in use';
-        } else {
-            // Update profile
-            $updated = $db->update(
-                "UPDATE users SET first_name = ?, last_name = ?, email = ?, phone = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?",
-                [$first_name, $last_name, $email, $phone, $user['id']]
-            );
-            
-            if ($updated) {
-                // Update session
-                $_SESSION['user_email'] = $email;
-                $_SESSION['user_name'] = $first_name . ' ' . $last_name;
-                
-                logActivity($user['id'], 'profile_updated', 'User updated profile information');
-                $_SESSION['success'] = 'Profile updated successfully';
-                
-                // Refresh user data
-                $user = getCurrentUser();
-            } else {
-                $_SESSION['error'] = 'Failed to update profile';
-            }
+        $error = 'Please enter a valid email address';
+    } elseif ($email !== $user['email']) {
+        // Check if new email already exists
+        $existing = $db->selectOne("SELECT id FROM users WHERE email = ? AND id != ?", [$email, $user['id']]);
+        if ($existing) {
+            $error = 'Email address is already registered by another user';
         }
+    }
+
+    // Check for duplicate phone number (only if phone is provided and different from current)
+    if (empty($error) && !empty($phone) && $phone !== ($user['phone'] ?? '')) {
+        $existing_phone = $db->selectOne("SELECT id FROM users WHERE phone = ? AND id != ?", [$phone, $user['id']]);
+        if ($existing_phone) {
+            $error = 'Phone number is already registered by another user';
+        }
+    }
+
+    if (empty($error)) {
+        // Update profile
+        $updated = $db->update(
+            "UPDATE users SET first_name = ?, last_name = ?, email = ?, phone = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?",
+            [$first_name, $last_name, $email, $phone, $user['id']]
+        );
+
+        if ($updated) {
+            // Update session
+            $_SESSION['user_email'] = $email;
+            $_SESSION['user_name'] = $first_name . ' ' . $last_name;
+
+            logActivity($user['id'], 'profile_updated', 'User updated profile information');
+            $_SESSION['success'] = 'Profile updated successfully';
+
+            // Refresh user data
+            $user = getCurrentUser();
+        } else {
+            $_SESSION['error'] = 'Failed to update profile';
+        }
+    } else {
+        $_SESSION['error'] = $error;
     }
 }
 
@@ -58,7 +66,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change_password'])) {
     $current_password = $_POST['current_password'];
     $new_password = $_POST['new_password'];
     $confirm_password = $_POST['confirm_password'];
-    
+
     if (empty($current_password) || empty($new_password) || empty($confirm_password)) {
         $_SESSION['error'] = 'Please fill in all password fields';
     } elseif ($new_password !== $confirm_password) {
@@ -74,7 +82,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change_password'])) {
             "UPDATE users SET password_hash = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?",
             [$new_password_hash, $user['id']]
         );
-        
+
         if ($updated) {
             logActivity($user['id'], 'password_changed', 'User changed password');
             $_SESSION['success'] = 'Password changed successfully';
@@ -150,7 +158,7 @@ include '../includes/header.php';
                                 </div>
                             </div>
                         </div>
-                        
+
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="mb-3">
@@ -204,13 +212,13 @@ include '../includes/header.php';
                             <label for="current_password" class="form-label">Current Password</label>
                             <input type="password" class="form-control" id="current_password" name="current_password" required>
                         </div>
-                        
+
                         <div class="mb-3">
                             <label for="new_password" class="form-label">New Password</label>
                             <input type="password" class="form-control" id="new_password" name="new_password" required>
                             <div class="form-text">Password must be at least 6 characters long</div>
                         </div>
-                        
+
                         <div class="mb-3">
                             <label for="confirm_password" class="form-label">Confirm New Password</label>
                             <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
@@ -236,12 +244,12 @@ include '../includes/header.php';
                         <strong>Last Login:</strong><br>
                         <small class="text-muted"><?php echo $user['last_login'] ? getTimeAgo($user['last_login']) : 'N/A'; ?></small>
                     </div>
-                    
+
                     <div class="mb-3">
                         <strong>Account Status:</strong><br>
                         <span class="badge bg-success">Active</span>
                     </div>
-                    
+
                     <?php if ($user['role'] === 'department' && $user['department_code']): ?>
                     <div class="mb-3">
                         <strong>Department Code:</strong><br>
