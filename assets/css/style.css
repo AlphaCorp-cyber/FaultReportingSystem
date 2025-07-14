@@ -553,58 +553,221 @@ footer {
     color: #212529 !important;
 }
 
-/* Force all regular white cards to have dark text */
-.card {
+/* Force all regular white cards to have dark text - Most specific rules */
+.card,
+.card *,
+.card .card-body,
+.card .card-body *,
+.card .card-header,
+.card .card-header *,
+.card h1, .card h2, .card h3, .card h4, .card h5, .card h6,
+.card p, .card small, .card span, .card div, .card a,
+.card td, .card th, .card tbody, .card tr,
+.card .text-muted,
+.card .small,
+.card .mb-0,
+.card .mb-1,
+.card .mb-2,
+.card .mb-3,
+.card .fw-bold,
+.card .text-center,
+.card .py-3 {
     color: #212529 !important;
 }
 
-.card .card-body {
+/* Bootstrap utility class overrides for cards */
+.card .text-white {
     color: #212529 !important;
 }
 
-.card .card-header {
-    color: #212529 !important;
-}
-
-.card h1, .card h2, .card h3, .card h4, .card h5, .card h6 {
-    color: #212529 !important;
-}
-
-.card p, .card small, .card span, .card div {
-    color: #212529 !important;
-}
-
-.card td, .card th {
+.card .text-light {
     color: #212529 !important;
 }
 
 /* Override only for specifically colored cards */
-.card.bg-primary, .card.bg-primary * {
+.card.bg-primary, 
+.card.bg-primary *,
+.card.bg-primary .card-body,
+.card.bg-primary .card-body *,
+.card.bg-primary .card-header,
+.card.bg-primary .card-header *,
+.card.bg-primary h1, .card.bg-primary h2, .card.bg-primary h3, 
+.card.bg-primary h4, .card.bg-primary h5, .card.bg-primary h6,
+.card.bg-primary p, .card.bg-primary small, .card.bg-primary span, 
+.card.bg-primary div, .card.bg-primary a,
+.card.bg-primary td, .card.bg-primary th, .card.bg-primary tbody, .card.bg-primary tr,
+.card.bg-primary .text-muted,
+.card.bg-primary .small,
+.card.bg-primary .mb-0,
+.card.bg-primary .mb-1,
+.card.bg-primary .mb-2,
+.card.bg-primary .mb-3,
+.card.bg-primary .fw-bold,
+.card.bg-primary .text-center,
+.card.bg-primary .py-3 {
     color: #fff !important;
 }
 
-.card.bg-success, .card.bg-success * {
+.card.bg-success, 
+.card.bg-success *,
+.card.bg-success .card-body,
+.card.bg-success .card-body *,
+.card.bg-success .card-header,
+.card.bg-success .card-header *,
+.card.bg-success h1, .card.bg-success h2, .card.bg-success h3, 
+.card.bg-success h4, .card.bg-success h5, .card.bg-success h6,
+.card.bg-success p, .card.bg-success small, .card.bg-success span, 
+.card.bg-success div, .card.bg-success a,
+.card.bg-success td, .card.bg-success th, .card.bg-success tbody, .card.bg-success tr,
+.card.bg-success .text-muted,
+.card.bg-success .small,
+.card.bg-success .mb-0,
+.card.bg-success .mb-1,
+.card.bg-success .mb-2,
+.card.bg-success .mb-3,
+.card.bg-success .fw-bold,
+.card.bg-success .text-center,
+.card.bg-success .py-3 {
     color: #fff !important;
 }
 
-.card.bg-info, .card.bg-info * {
+.card.bg-info, 
+.card.bg-info *,
+.card.bg-info .card-body,
+.card.bg-info .card-body *,
+.card.bg-info .card-header,
+.card.bg-info .card-header *,
+.card.bg-info h1, .card.bg-info h2, .card.bg-info h3, 
+.card.bg-info h4, .card.bg-info h5, .card.bg-info h6,
+.card.bg-info p, .card.bg-info small, .card.bg-info span, 
+.card.bg-info div, .card.bg-info a,
+.card.bg-info td, .card.bg-info th, .card.bg-info tbody, .card.bg-info tr,
+.card.bg-info .text-muted,
+.card.bg-info .small,
+.card.bg-info .mb-0,
+.card.bg-info .mb-1,
+.card.bg-info .mb-2,
+.card.bg-info .mb-3,
+.card.bg-info .fw-bold,
+.card.bg-info .text-center,
+.card.bg-info .py-3 {
     color: #fff !important;
 }
 
-.card.bg-danger, .card.bg-danger * {
+.card.bg-danger, 
+.card.bg-danger *,
+.card.bg-danger .card-body,
+.card.bg-danger .card-body *,
+.card.bg-danger .card-header,
+.card.bg-danger .card-header *,
+.card.bg-danger h1, .card.bg-danger h2, .card.bg-danger h3, 
+.card.bg-danger h4, .card.bg-danger h5, .card.bg-danger h6,
+.card.bg-danger p, .card.bg-danger small, .card.bg-danger span, 
+.card.bg-danger div, .card.bg-danger a,
+.card.bg-danger td, .card.bg-danger th, .card.bg-danger tbody, .card.bg-danger tr,
+.card.bg-danger .text-muted,
+.card.bg-danger .small,
+.card.bg-danger .mb-0,
+.card.bg-danger .mb-1,
+.card.bg-danger .mb-2,
+.card.bg-danger .mb-3,
+.card.bg-danger .fw-bold,
+.card.bg-danger .text-center,
+.card.bg-danger .py-3 {
     color: #fff !important;
 }
 
-.card.bg-secondary, .card.bg-secondary * {
+.card.bg-secondary, 
+.card.bg-secondary *,
+.card.bg-secondary .card-body,
+.card.bg-secondary .card-body *,
+.card.bg-secondary .card-header,
+.card.bg-secondary .card-header *,
+.card.bg-secondary h1, .card.bg-secondary h2, .card.bg-secondary h3, 
+.card.bg-secondary h4, .card.bg-secondary h5, .card.bg-secondary h6,
+.card.bg-secondary p, .card.bg-secondary small, .card.bg-secondary span, 
+.card.bg-secondary div, .card.bg-secondary a,
+.card.bg-secondary td, .card.bg-secondary th, .card.bg-secondary tbody, .card.bg-secondary tr,
+.card.bg-secondary .text-muted,
+.card.bg-secondary .small,
+.card.bg-secondary .mb-0,
+.card.bg-secondary .mb-1,
+.card.bg-secondary .mb-2,
+.card.bg-secondary .mb-3,
+.card.bg-secondary .fw-bold,
+.card.bg-secondary .text-center,
+.card.bg-secondary .py-3 {
     color: #fff !important;
 }
 
-.card.bg-dark, .card.bg-dark * {
+.card.bg-dark, 
+.card.bg-dark *,
+.card.bg-dark .card-body,
+.card.bg-dark .card-body *,
+.card.bg-dark .card-header,
+.card.bg-dark .card-header *,
+.card.bg-dark h1, .card.bg-dark h2, .card.bg-dark h3, 
+.card.bg-dark h4, .card.bg-dark h5, .card.bg-dark h6,
+.card.bg-dark p, .card.bg-dark small, .card.bg-dark span, 
+.card.bg-dark div, .card.bg-dark a,
+.card.bg-dark td, .card.bg-dark th, .card.bg-dark tbody, .card.bg-dark tr,
+.card.bg-dark .text-muted,
+.card.bg-dark .small,
+.card.bg-dark .mb-0,
+.card.bg-dark .mb-1,
+.card.bg-dark .mb-2,
+.card.bg-dark .mb-3,
+.card.bg-dark .fw-bold,
+.card.bg-dark .text-center,
+.card.bg-dark .py-3 {
     color: #fff !important;
 }
 
-.card.bg-warning, .card.bg-warning * {
+.card.bg-warning, 
+.card.bg-warning *,
+.card.bg-warning .card-body,
+.card.bg-warning .card-body *,
+.card.bg-warning .card-header,
+.card.bg-warning .card-header *,
+.card.bg-warning h1, .card.bg-warning h2, .card.bg-warning h3, 
+.card.bg-warning h4, .card.bg-warning h5, .card.bg-warning h6,
+.card.bg-warning p, .card.bg-warning small, .card.bg-warning span, 
+.card.bg-warning div, .card.bg-warning a,
+.card.bg-warning td, .card.bg-warning th, .card.bg-warning tbody, .card.bg-warning tr,
+.card.bg-warning .text-muted,
+.card.bg-warning .small,
+.card.bg-warning .mb-0,
+.card.bg-warning .mb-1,
+.card.bg-warning .mb-2,
+.card.bg-warning .mb-3,
+.card.bg-warning .fw-bold,
+.card.bg-warning .text-center,
+.card.bg-warning .py-3 {
     color: #212529 !important;
+}
+
+/* Force visibility for all card content */
+.card, .card * {
+    visibility: visible !important;
+    opacity: 1 !important;
+    display: block !important;
+}
+
+/* Special rules for table elements in cards */
+.card table, .card tbody, .card tr, .card td, .card th {
+    display: table !important;
+}
+
+.card tbody {
+    display: table-row-group !important;
+}
+
+.card tr {
+    display: table-row !important;
+}
+
+.card td, .card th {
+    display: table-cell !important;
 }
 
 /* Buttons */
