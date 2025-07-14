@@ -272,13 +272,13 @@ include '../includes/header.php';
                             <li>Average resolution time: <?php echo round($performance_metrics['avg_resolution_time'], 1); ?> days</li>
                             <li>Best performing category: 
                                 <?php 
-                                $best_category = $db->selectOne("SELECT category FROM fault_reports WHERE status = 'resolved' AND created_at >= DATE_SUB(NOW(), INTERVAL 6 MONTH) GROUP BY category ORDER BY AVG(DATEDIFF(updated_at, created_at)) ASC LIMIT 1");
+                                $best_category = $db->selectOne("SELECT category FROM fault_reports WHERE status = 'resolved' AND created_at >= NOW() - INTERVAL '6 months' GROUP BY category ORDER BY AVG(EXTRACT(EPOCH FROM (updated_at - created_at))/86400) ASC LIMIT 1");
                                 echo $best_category ? getFaultCategoryName($best_category['category']) : 'N/A';
                                 ?>
                             </li>
                             <li>Peak reporting hours: 
                                 <?php 
-                                $peak_hour = $db->selectOne("SELECT HOUR(created_at) as hour FROM fault_reports WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY) GROUP BY HOUR(created_at) ORDER BY COUNT(*) DESC LIMIT 1");
+                                $peak_hour = $db->selectOne("SELECT EXTRACT(HOUR FROM created_at) as hour FROM fault_reports WHERE created_at >= NOW() - INTERVAL '30 days' GROUP BY EXTRACT(HOUR FROM created_at) ORDER BY COUNT(*) DESC LIMIT 1");
                                 echo $peak_hour ? $peak_hour['hour'] . ':00' : 'N/A';
                                 ?>
                             </li>
@@ -300,7 +300,7 @@ include '../includes/header.php';
                             <?php if ($performance_metrics['avg_resolution_time'] > 5): ?>
                                 <li>Resolution time exceeds target - consider resource allocation</li>
                             <?php endif; ?>
-                            <?php if (($performance_metrics['total_resolved'] / $performance_metrics['total_processed']) < 0.8): ?>
+                            <?php if ($performance_metrics['total_processed'] > 0 && ($performance_metrics['total_resolved'] / $performance_metrics['total_processed']) < 0.8): ?>
                                 <li>Resolution rate below 80% - review workflow processes</li>
                             <?php endif; ?>
                             <?php if (!empty($location_analysis)): ?>

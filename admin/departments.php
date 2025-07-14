@@ -130,7 +130,7 @@ include '../includes/header.php';
             "SELECT 
                 COUNT(*) as total_assigned,
                 SUM(CASE WHEN status = 'resolved' THEN 1 ELSE 0 END) as total_resolved,
-                AVG(CASE WHEN status = 'resolved' THEN DATEDIFF(updated_at, created_at) ELSE NULL END) as avg_resolution_time
+                AVG(CASE WHEN status = 'resolved' THEN EXTRACT(EPOCH FROM (updated_at - created_at))/86400 ELSE NULL END) as avg_resolution_time
             FROM fault_reports 
             WHERE assigned_department IS NOT NULL"
         );

@@ -47,7 +47,7 @@ $pending_requests = $db->select("
     FROM user_verification_requests vr
     JOIN users u ON vr.user_id = u.id
     WHERE vr.status = 'pending'
-    ORDER BY vr.submission_date ASC
+    ORDER BY vr.created_at ASC
 ");
 
 // Get recent verification history
