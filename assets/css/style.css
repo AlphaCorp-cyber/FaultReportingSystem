@@ -770,6 +770,31 @@ footer {
     display: table-cell !important;
 }
 
+/* Utility class for forcing black text - use as inline style helper */
+.force-black-text,
+.force-black-text *,
+.force-black-text h1,
+.force-black-text h2,
+.force-black-text h3,
+.force-black-text h4,
+.force-black-text h5,
+.force-black-text h6,
+.force-black-text p,
+.force-black-text div,
+.force-black-text span,
+.force-black-text small,
+.force-black-text td,
+.force-black-text th,
+.force-black-text .badge,
+.force-black-text .text-muted {
+    color: #212529 !important;
+}
+
+/* Inline style equivalent for direct application */
+[style*="color: #212529"] {
+    color: #212529 !important;
+}
+
 /* Buttons */
 .btn {
     border-radius: var(--border-radius);

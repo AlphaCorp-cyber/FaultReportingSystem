@@ -173,26 +173,26 @@ include '../includes/header.php';
     <div class="row">
         <!-- Recent Fault Reports -->
         <div class="col-lg-8">
-            <div class="card">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0">Recent Fault Reports</h5>
+            <div class="card" style="color: #212529 !important;">
+                <div class="card-header d-flex justify-content-between align-items-center" style="color: #212529 !important;">
+                    <h5 class="mb-0" style="color: #212529 !important;">Recent Fault Reports</h5>
                     <a href="manage_faults.php" class="btn btn-sm btn-primary">View All</a>
                 </div>
-                <div class="card-body">
+                <div class="card-body" style="color: #212529 !important;">
                     <div class="table-responsive">
-                        <table class="table table-hover">
-                            <thead>
-                                <tr>
-                                    <th>Reference</th>
-                                    <th>Reporter</th>
-                                    <th>Category</th>
-                                    <th>Priority</th>
-                                    <th>Status</th>
-                                    <th>Date</th>
-                                    <th>Actions</th>
+                        <table class="table table-hover" style="color: #212529 !important;">
+                            <thead style="color: #212529 !important;">
+                                <tr style="color: #212529 !important;">
+                                    <th style="color: #212529 !important;">Reference</th>
+                                    <th style="color: #212529 !important;">Reporter</th>
+                                    <th style="color: #212529 !important;">Category</th>
+                                    <th style="color: #212529 !important;">Priority</th>
+                                    <th style="color: #212529 !important;">Status</th>
+                                    <th style="color: #212529 !important;">Date</th>
+                                    <th style="color: #212529 !important;">Actions</th>
                                 </tr>
                             </thead>
-                            <tbody>
+                            <tbody style="color: #212529 !important;">
                                 <?php foreach ($recent_faults as $fault): ?>
                                     <tr>
                                         <td>
@@ -252,21 +252,21 @@ include '../includes/header.php';
         <!-- Quick Stats and Actions -->
         <div class="col-lg-4">
             <!-- Category Breakdown -->
-            <div class="card">
-                <div class="card-header">
-                    <h5 class="mb-0">Category Breakdown</h5>
+            <div class="card" style="color: #212529 !important;">
+                <div class="card-header" style="color: #212529 !important;">
+                    <h5 class="mb-0" style="color: #212529 !important;">Category Breakdown</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body" style="color: #212529 !important;">
                     <canvas id="categoryChart" width="400" height="200"></canvas>
                 </div>
             </div>
 
             <!-- Quick Actions -->
-            <div class="card mt-4">
-                <div class="card-header">
-                    <h5 class="mb-0">Quick Actions</h5>
+            <div class="card mt-4" style="color: #212529 !important;">
+                <div class="card-header" style="color: #212529 !important;">
+                    <h5 class="mb-0" style="color: #212529 !important;">Quick Actions</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body" style="color: #212529 !important;">
                     <div class="d-grid gap-2">
                         <a href="manage_faults.php" class="btn btn-primary">
                             <i class="fas fa-tools me-2"></i>Manage Faults
@@ -285,11 +285,11 @@ include '../includes/header.php';
             </div>
 
             <!-- System Status -->
-            <div class="card mt-4">
-                <div class="card-header">
-                    <h5 class="mb-0">System Status</h5>
+            <div class="card mt-4" style="color: #212529 !important;">
+                <div class="card-header" style="color: #212529 !important;">
+                    <h5 class="mb-0" style="color: #212529 !important;">System Status</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body" style="color: #212529 !important;">
                     <div class="mb-3">
                         <div class="d-flex justify-content-between">
                             <span>Total Users</span>
