@@ -108,7 +108,7 @@ include '../includes/header.php';
                 <div class="card-body">
                     <div class="d-flex justify-content-between">
                         <div>
-                            <h4 class="mb-1"><?php echo round($performance_metrics['avg_resolution_time'], 1); ?></h4>
+                            <h4 class="mb-1"><?php echo round($performance_metrics['avg_resolution_time'] ?? 0, 1); ?></h4>
                             <p class="mb-0">Avg Resolution Time (Days)</p>
                         </div>
                         <div class="align-self-center">
@@ -269,7 +269,7 @@ include '../includes/header.php';
                     <div class="alert alert-info">
                         <h6><i class="fas fa-lightbulb me-2"></i>Performance Insights</h6>
                         <ul class="mb-0">
-                            <li>Average resolution time: <?php echo round($performance_metrics['avg_resolution_time'], 1); ?> days</li>
+                            <li>Average resolution time: <?php echo round($performance_metrics['avg_resolution_time'] ?? 0, 1); ?> days</li>
                             <li>Best performing category: 
                                 <?php 
                                 $best_category = $db->selectOne("SELECT category FROM fault_reports WHERE status = 'resolved' AND created_at >= NOW() - INTERVAL '6 months' GROUP BY category ORDER BY AVG(EXTRACT(EPOCH FROM (updated_at - created_at))/86400) ASC LIMIT 1");

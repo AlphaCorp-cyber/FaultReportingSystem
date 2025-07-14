@@ -200,7 +200,7 @@ include '../includes/header.php';
                 <div class="card-body">
                     <div class="d-flex justify-content-between">
                         <div>
-                            <h4><?php echo $user_summary['suspended_count']; ?></h4>
+                            <h4><?php echo $user_summary['suspended_count'] ?? 0; ?></h4>
                             <p class="mb-0">Suspended Users</p>
                         </div>
                         <i class="fas fa-user-slash fa-2x"></i>
@@ -321,8 +321,8 @@ include '../includes/header.php';
                                     </span>
                                 </td>
                                 <td>
-                                    <span class="badge bg-<?php echo $user_row['status'] === 'active' ? 'success' : ($user_row['status'] === 'suspended' ? 'danger' : 'secondary'); ?>">
-                                        <?php echo ucfirst($user_row['status']); ?>
+                                    <span class="badge bg-<?php echo ($user_row['status'] ?? 'active') === 'active' ? 'success' : (($user_row['status'] ?? 'active') === 'suspended' ? 'danger' : 'secondary'); ?>">
+                                        <?php echo ucfirst($user_row['status'] ?? 'active'); ?>
                                     </span>
                                 </td>
                                 <td>
@@ -336,7 +336,7 @@ include '../includes/header.php';
                                 <td>
                                     <small>
                                         <?php echo formatDate($user_row['created_at']); ?>
-                                        <?php if ($user_row['last_login']): ?>
+                                        <?php if (!empty($user_row['last_login'])): ?>
                                             <br><span class="text-muted">Last: <?php echo getTimeAgo($user_row['last_login']); ?></span>
                                         <?php endif; ?>
                                     </small>
@@ -347,7 +347,7 @@ include '../includes/header.php';
                                             <i class="fas fa-cog"></i>
                                         </button>
                                         <ul class="dropdown-menu">
-                                            <?php if ($user_row['status'] === 'active'): ?>
+                                            <?php if (($user_row['status'] ?? 'active') === 'active'): ?>
                                                 <li><a class="dropdown-item" href="#" onclick="confirmAction('deactivate', <?php echo $user_row['id']; ?>, 'deactivate this user')">
                                                     <i class="fas fa-user-times text-warning me-2"></i>Deactivate
                                                 </a></li>

@@ -157,7 +157,7 @@ include '../includes/header.php';
                                                 </div>
                                             </td>
                                             <td>
-                                                <div class="text-muted small"><?php echo getTimeAgo($request['submission_date']); ?></div>
+                                                <div class="text-muted small"><?php echo getTimeAgo($request['created_at']); ?></div>
                                             </td>
                                             <td>
                                                 <div class="btn-group btn-group-sm">

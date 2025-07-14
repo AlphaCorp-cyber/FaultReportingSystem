@@ -43,10 +43,17 @@ function generateUniqueId($prefix = '') {
 }
 
 function formatDate($date) {
+    if (empty($date)) {
+        return 'N/A';
+    }
     return date('M j, Y g:i A', strtotime($date));
 }
 
 function getTimeAgo($datetime) {
+    if (empty($datetime)) {
+        return 'N/A';
+    }
+    
     $time = time() - strtotime($datetime);
     
     if ($time < 60) return 'just now';
