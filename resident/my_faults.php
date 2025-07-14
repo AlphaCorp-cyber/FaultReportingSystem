@@ -191,11 +191,32 @@ include '../includes/header.php';
                                         <span class="badge bg-light text-dark">
                                             <?php echo getFaultCategoryName($fault['category']); ?>
                                         </span>
+                                        <br>
+                                        <small class="text-muted">
+                                            <i class="fas fa-building me-1"></i>
+                                            <?php echo getDepartmentName($fault['assigned_department'] ?? 'general'); ?>
+                                        </small>
                                     </td>
                                     <td>
-                                        <span class="badge <?php echo getStatusBadgeClass($fault['status']); ?>">
-                                            <?php echo getFaultStatusName($fault['status']); ?>
-                                        </span>
+                                        <?php
+                                        $progress_percentage = getProgressPercentage($fault['status']);
+                                        $progress_color = getProgressColor($fault['status']);
+                                        ?>
+                                        <div class="mb-1">
+                                            <span class="badge <?php echo getStatusBadgeClass($fault['status']); ?>">
+                                                <?php echo getFaultStatusName($fault['status']); ?>
+                                            </span>
+                                        </div>
+                                        <div class="progress" style="height: 6px; width: 100px;">
+                                            <div class="progress-bar bg-<?php echo $progress_color; ?>" 
+                                                 role="progressbar" 
+                                                 style="width: <?php echo $progress_percentage; ?>%"
+                                                 aria-valuenow="<?php echo $progress_percentage; ?>" 
+                                                 aria-valuemin="0" 
+                                                 aria-valuemax="100">
+                                            </div>
+                                        </div>
+                                        <small class="text-muted"><?php echo $progress_percentage; ?>%</small>
                                     </td>
                                     <td>
                                         <span class="badge bg-<?php echo $fault['priority'] === 'high' ? 'danger' : ($fault['priority'] === 'medium' ? 'warning' : 'info'); ?>">
@@ -224,7 +245,7 @@ include '../includes/header.php';
                                                 <i class="fas fa-eye"></i>
                                             </button>
                                             <button class="btn btn-sm btn-outline-secondary" 
-                                                    onclick="trackFault('<?php echo $fault['reference_number']; ?>')"
+                                                    onclick="showProgressModal(<?php echo $fault['id']; ?>, '<?php echo $fault['reference_number']; ?>')"
                                                     title="Track Progress">
                                                 <i class="fas fa-route"></i>
                                             </button>
@@ -267,6 +288,31 @@ include '../includes/header.php';
                     </nav>
                 <?php endif; ?>
             <?php endif; ?>
+        </div>
+    </div>
+</div>
+
+<!-- Progress Tracking Modal -->
+<div class="modal fade" id="progressModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-route me-2"></i>
+                    Progress Tracking - <span id="progressRefNumber"></span>
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div id="progressContent">
+                    <div class="text-center">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <p class="mt-2">Loading progress information...</p>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>

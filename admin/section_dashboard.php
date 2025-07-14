@@ -63,16 +63,72 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                 );
 
                 if ($result) {
-                    // Log status change
+                    // Add progress update for resident
+                    $progress_message = '';
+                    switch ($new_status) {
+                        case 'in_progress':
+                            $progress_message = 'Work has started on your fault report. Our team is actively working on resolving the issue.';
+                            break;
+                        case 'resolved':
+                            $progress_message = 'Your fault report has been resolved. ' . ($notes ? 'Resolution details: ' . $notes : '');
+                            break;
+                        case 'closed':
+                            $progress_message = 'Your fault report has been closed. ' . ($notes ? 'Final notes: ' . $notes : '');
+                            break;
+                        case 'on_hold':
+                            $progress_message = 'Your fault report is temporarily on hold. ' . ($notes ? 'Reason: ' . $notes : '');
+                            break;
+                        default:
+                            $progress_message = 'Status updated to ' . getFaultStatusName($new_status) . ($notes ? '. Notes: ' . $notes : '');
+                    }
+                    
                     $db->insert(
-                        "INSERT INTO fault_status_history (fault_id, old_status, new_status, changed_by, notes) VALUES (?, (SELECT status FROM fault_reports WHERE id = ?), ?, ?, ?)",
-                        [$fault_id, $fault_id, $new_status, $user['id'], $notes]
+                        "INSERT INTO fault_progress_updates (fault_id, status, message, created_by) VALUES (?, ?, ?, ?)",
+                        [$fault_id, $new_status, $progress_message, $user['id']]
                     );
 
                     logActivity($user['id'], 'fault_status_updated', "Updated fault status to: $new_status");
                     $_SESSION['success'] = 'Status updated successfully';
                 } else {
                     $_SESSION['error'] = 'Failed to update status';
+                }
+            }
+            break;
+
+        case 'transfer_department':
+            $new_department = $_POST['new_department'] ?? '';
+            $transfer_reason = $_POST['transfer_reason'] ?? '';
+            
+            if (isValidDepartment($new_department)) {
+                $current_fault = $db->selectOne("SELECT * FROM fault_reports WHERE id = ?", [$fault_id]);
+                
+                if ($current_fault) {
+                    $result = $db->update(
+                        "UPDATE fault_reports SET assigned_department = ?, assigned_to = NULL, status = 'assigned', updated_at = CURRENT_TIMESTAMP WHERE id = ?",
+                        [$new_department, $fault_id]
+                    );
+
+                    if ($result) {
+                        // Log department transfer
+                        $db->insert(
+                            "INSERT INTO fault_department_transfers (fault_id, from_department, to_department, reason, transferred_by) VALUES (?, ?, ?, ?, ?)",
+                            [$fault_id, $current_fault['assigned_department'], $new_department, $transfer_reason, $user['id']]
+                        );
+
+                        // Add progress update for resident
+                        $dept_name = getDepartmentName($new_department);
+                        $progress_message = "Your fault report has been transferred to the $dept_name for proper handling. " . ($transfer_reason ? "Reason: $transfer_reason" : '');
+                        
+                        $db->insert(
+                            "INSERT INTO fault_progress_updates (fault_id, status, message, created_by) VALUES (?, 'transferred', ?, ?)",
+                            [$fault_id, $progress_message, $user['id']]
+                        );
+
+                        logActivity($user['id'], 'fault_transferred', "Transferred fault to $new_department");
+                        $_SESSION['success'] = 'Fault transferred successfully';
+                    } else {
+                        $_SESSION['error'] = 'Failed to transfer fault';
+                    }
                 }
             }
             break;
@@ -339,9 +395,14 @@ include '../includes/header.php';
                                                 </span>
                                             </td>
                                             <td>
-                                                <button class="btn btn-sm btn-success" onclick="updateStatus(<?php echo $fault['id']; ?>)">
-                                                    <i class="fas fa-edit"></i> Update
-                                                </button>
+                                                <div class="btn-group" role="group">
+                                                    <button class="btn btn-sm btn-success" onclick="updateStatus(<?php echo $fault['id']; ?>)">
+                                                        <i class="fas fa-edit"></i> Update
+                                                    </button>
+                                                    <button class="btn btn-sm btn-warning" onclick="transferDepartment(<?php echo $fault['id']; ?>)">
+                                                        <i class="fas fa-exchange-alt"></i> Transfer
+                                                    </button>
+                                                </div>
                                             </td>
                                         </tr>
                                     <?php endforeach; ?>

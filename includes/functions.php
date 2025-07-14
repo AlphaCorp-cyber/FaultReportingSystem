@@ -80,6 +80,57 @@ function logActivity($user_id, $action, $description = '') {
     }
 }
 
+function getFaultStatusName($status) {
+    $statuses = [
+        'submitted' => 'Submitted',
+        'assigned' => 'Assigned',
+        'in_progress' => 'In Progress',
+        'on_hold' => 'On Hold',
+        'resolved' => 'Resolved',
+        'closed' => 'Closed',
+        'rejected' => 'Rejected'
+    ];
+    return $statuses[$status] ?? ucfirst($status);
+}
+
+function getDepartmentName($dept_key) {
+    $departments = [
+        'water' => 'Water Department',
+        'roads' => 'Roads Department',
+        'electricity' => 'Electricity Department',
+        'parks' => 'Parks Department',
+        'waste' => 'Waste Management',
+        'general' => 'General Services'
+    ];
+    return $departments[$dept_key] ?? ucfirst($dept_key) . ' Department';
+}
+
+function getProgressPercentage($status) {
+    $percentages = [
+        'submitted' => 10,
+        'assigned' => 25,
+        'in_progress' => 60,
+        'on_hold' => 50,
+        'resolved' => 90,
+        'closed' => 100,
+        'rejected' => 0
+    ];
+    return $percentages[$status] ?? 0;
+}
+
+function getProgressColor($status) {
+    $colors = [
+        'submitted' => 'info',
+        'assigned' => 'primary',
+        'in_progress' => 'warning',
+        'on_hold' => 'secondary',
+        'resolved' => 'success',
+        'closed' => 'success',
+        'rejected' => 'danger'
+    ];
+    return $colors[$status] ?? 'secondary';
+}
+
 function sendNotification($user_id, $title, $message, $type = 'info') {
     global $db;
     try {
@@ -127,15 +178,9 @@ function getFaultCategoryName($category) {
     return isset($categories[$category]) ? $categories[$category] : 'Unknown';
 }
 
-function getFaultStatusName($status) {
-    $statuses = FAULT_STATUSES;
-    return isset($statuses[$status]) ? $statuses[$status] : 'Unknown';
-}
 
-function getDepartmentName($department) {
-    $departments = DEPARTMENTS;
-    return isset($departments[$department]) ? $departments[$department] : 'Unknown';
-}
+
+
 
 function getStatusBadgeClass($status) {
     $classes = [

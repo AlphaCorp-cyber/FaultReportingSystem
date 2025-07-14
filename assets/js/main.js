@@ -917,3 +917,175 @@ function exportData(format) {
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = { RedcliffApp, FaultManager, ChartManager };
 }
+
+// Progress tracking functions
+function showProgressModal(faultId, referenceNumber) {
+    document.getElementById('progressRefNumber').textContent = referenceNumber;
+    
+    const modal = new bootstrap.Modal(document.getElementById('progressModal'));
+    modal.show();
+    
+    fetch(`/api/get_fault_progress.php?fault_id=${faultId}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                displayProgressUpdates(data.updates, data.fault);
+            } else {
+                document.getElementById('progressContent').innerHTML = 
+                    '<div class="alert alert-danger">Error loading progress information</div>';
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            document.getElementById('progressContent').innerHTML = 
+                '<div class="alert alert-danger">Error loading progress information</div>';
+        });
+}
+
+function displayProgressUpdates(updates, fault) {
+    const progressPercentage = getProgressPercentage(fault.status);
+    const progressColor = getProgressColor(fault.status);
+    
+    let html = `
+        <div class="mb-4">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <h6>Current Status: ${fault.status_name}</h6>
+                <span class="badge bg-${progressColor}">${progressPercentage}%</span>
+            </div>
+            <div class="progress mb-2" style="height: 20px;">
+                <div class="progress-bar bg-${progressColor}" 
+                     role="progressbar" 
+                     style="width: ${progressPercentage}%"
+                     aria-valuenow="${progressPercentage}" 
+                     aria-valuemin="0" 
+                     aria-valuemax="100">
+                    ${progressPercentage}%
+                </div>
+            </div>
+            <div class="text-muted small">
+                <i class="fas fa-building me-1"></i>
+                Handled by: ${fault.department_name}
+            </div>
+        </div>
+        
+        <div class="mb-3">
+            <h6>Progress Timeline</h6>
+        </div>
+    `;
+    
+    if (updates.length === 0) {
+        html += '<div class="alert alert-info">No progress updates available yet.</div>';
+    } else {
+        html += '<div class="timeline">';
+        updates.forEach(update => {
+            html += `
+                <div class="timeline-item mb-3">
+                    <div class="d-flex">
+                        <div class="timeline-marker bg-${getProgressColor(update.status)} me-3" style="width: 12px; height: 12px; border-radius: 50%; margin-top: 5px;"></div>
+                        <div class="timeline-content flex-grow-1">
+                            <div class="d-flex justify-content-between">
+                                <h6 class="mb-1">${update.status_name}</h6>
+                                <small class="text-muted">${formatDate(update.created_at)}</small>
+                            </div>
+                            <p class="mb-1">${update.message}</p>
+                            <small class="text-muted">Updated by: ${update.updated_by}</small>
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+        html += '</div>';
+    }
+    
+    document.getElementById('progressContent').innerHTML = html;
+}
+
+function transferDepartment(faultId) {
+    const modal = document.createElement('div');
+    modal.innerHTML = `
+        <div class="modal fade" id="transferModal" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Transfer to Different Department</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <form method="POST" action="">
+                        <div class="modal-body">
+                            <input type="hidden" name="action" value="transfer_department">
+                            <input type="hidden" name="fault_id" value="${faultId}">
+                            
+                            <div class="mb-3">
+                                <label for="new_department" class="form-label">Transfer to Department</label>
+                                <select class="form-select" name="new_department" required>
+                                    <option value="">Select Department</option>
+                                    <option value="water">Water Department</option>
+                                    <option value="roads">Roads Department</option>
+                                    <option value="electricity">Electricity Department</option>
+                                    <option value="parks">Parks Department</option>
+                                    <option value="waste">Waste Management</option>
+                                    <option value="general">General Services</option>
+                                </select>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="transfer_reason" class="form-label">Reason for Transfer</label>
+                                <textarea class="form-control" name="transfer_reason" rows="3" 
+                                          placeholder="Explain why this fault should be handled by a different department"></textarea>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-warning">Transfer Fault</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(modal);
+    const transferModal = new bootstrap.Modal(document.getElementById('transferModal'));
+    transferModal.show();
+    
+    document.getElementById('transferModal').addEventListener('hidden.bs.modal', function () {
+        document.body.removeChild(modal);
+    });
+}
+
+function getProgressPercentage(status) {
+    const percentages = {
+        'submitted': 10,
+        'assigned': 25,
+        'in_progress': 60,
+        'on_hold': 50,
+        'resolved': 90,
+        'closed': 100,
+        'rejected': 0
+    };
+    return percentages[status] || 0;
+}
+
+function getProgressColor(status) {
+    const colors = {
+        'submitted': 'info',
+        'assigned': 'primary',
+        'in_progress': 'warning',
+        'on_hold': 'secondary',
+        'resolved': 'success',
+        'closed': 'success',
+        'rejected': 'danger'
+    };
+    return colors[status] || 'secondary';
+}
+
+function formatDate(dateString) {
+    return new Date(dateString).toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+    });
+}
+
