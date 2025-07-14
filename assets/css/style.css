@@ -37,19 +37,19 @@ body {
 
 /* Card text colors - ensure proper contrast */
 .card {
-    color: #2d3748;
+    color: #2d3748 !important;
     background-color: #fff;
     border: 1px solid #e2e8f0;
 }
 
 .card-header {
-    color: #2d3748;
+    color: #2d3748 !important;
     background-color: #f7fafc;
     border-bottom: 1px solid #e2e8f0;
 }
 
 .card-body {
-    color: #2d3748;
+    color: #2d3748 !important;
     background-color: #fff;
 }
 
@@ -523,6 +523,33 @@ footer {
 
 .card-body {
     background-color: #fff !important;
+    color: #212529 !important;
+}
+
+/* Override for regular cards to ensure dark text */
+.card:not(.bg-primary):not(.bg-success):not(.bg-info):not(.bg-danger):not(.bg-secondary):not(.bg-dark):not(.bg-warning) {
+    color: #212529 !important;
+}
+
+.card:not(.bg-primary):not(.bg-success):not(.bg-info):not(.bg-danger):not(.bg-secondary):not(.bg-dark):not(.bg-warning) .card-body {
+    color: #212529 !important;
+}
+
+.card:not(.bg-primary):not(.bg-success):not(.bg-info):not(.bg-danger):not(.bg-secondary):not(.bg-dark):not(.bg-warning) .card-header {
+    color: #212529 !important;
+}
+
+.card:not(.bg-primary):not(.bg-success):not(.bg-info):not(.bg-danger):not(.bg-secondary):not(.bg-dark):not(.bg-warning) h1,
+.card:not(.bg-primary):not(.bg-success):not(.bg-info):not(.bg-danger):not(.bg-secondary):not(.bg-dark):not(.bg-warning) h2,
+.card:not(.bg-primary):not(.bg-success):not(.bg-info):not(.bg-danger):not(.bg-secondary):not(.bg-dark):not(.bg-warning) h3,
+.card:not(.bg-primary):not(.bg-success):not(.bg-info):not(.bg-danger):not(.bg-secondary):not(.bg-dark):not(.bg-warning) h4,
+.card:not(.bg-primary):not(.bg-success):not(.bg-info):not(.bg-danger):not(.bg-secondary):not(.bg-dark):not(.bg-warning) h5,
+.card:not(.bg-primary):not(.bg-success):not(.bg-info):not(.bg-danger):not(.bg-secondary):not(.bg-dark):not(.bg-warning) h6 {
+    color: #212529 !important;
+}
+
+.card:not(.bg-primary):not(.bg-success):not(.bg-info):not(.bg-danger):not(.bg-secondary):not(.bg-dark):not(.bg-warning) p,
+.card:not(.bg-primary):not(.bg-success):not(.bg-info):not(.bg-danger):not(.bg-secondary):not(.bg-dark):not(.bg-warning) small {
     color: #212529 !important;
 }
 
