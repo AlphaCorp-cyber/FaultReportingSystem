@@ -26,7 +26,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         'confirm_password' => $_POST['confirm_password'],
         'phone' => sanitizeInput($_POST['phone']),
         'address' => sanitizeInput($_POST['address']),
-
     ];
     
     // Validation
@@ -39,14 +38,54 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $error = 'Password must be at least 6 characters long';
     } elseif ($data['password'] !== $data['confirm_password']) {
         $error = 'Passwords do not match';
+    } elseif (!isset($_FILES['national_id']) || $_FILES['national_id']['error'] !== UPLOAD_ERR_OK) {
+        $error = 'Please upload your national ID document';
+    } elseif (!isset($_FILES['photo']) || $_FILES['photo']['error'] !== UPLOAD_ERR_OK) {
+        $error = 'Please upload your current photo';
     } else {
-        $result = $auth->register($data);
+        // File upload validation
+        $allowed_types = ['image/jpeg', 'image/jpg', 'image/png', 'application/pdf'];
+        $max_size = 5 * 1024 * 1024; // 5MB
         
-        if ($result['success']) {
-            $success = 'Registration successful! You can now login.';
-            logActivity($result['user_id'], 'register', 'New user registered successfully');
+        if (!in_array($_FILES['national_id']['type'], $allowed_types) || $_FILES['national_id']['size'] > $max_size) {
+            $error = 'National ID must be a valid image or PDF file under 5MB';
+        } elseif (!in_array($_FILES['photo']['type'], ['image/jpeg', 'image/jpg', 'image/png']) || $_FILES['photo']['size'] > $max_size) {
+            $error = 'Photo must be a valid image file under 5MB';
         } else {
-            $error = $result['message'];
+            $result = $auth->register($data);
+            
+            if ($result['success']) {
+                // Upload files
+                $upload_dir = '../uploads/verification/';
+                if (!is_dir($upload_dir)) {
+                    mkdir($upload_dir, 0755, true);
+                }
+                
+                $user_id = $result['user_id'];
+                $national_id_filename = $user_id . '_national_id_' . time() . '.' . pathinfo($_FILES['national_id']['name'], PATHINFO_EXTENSION);
+                $photo_filename = $user_id . '_photo_' . time() . '.' . pathinfo($_FILES['photo']['name'], PATHINFO_EXTENSION);
+                
+                $national_id_path = $upload_dir . $national_id_filename;
+                $photo_path = $upload_dir . $photo_filename;
+                
+                if (move_uploaded_file($_FILES['national_id']['tmp_name'], $national_id_path) && 
+                    move_uploaded_file($_FILES['photo']['tmp_name'], $photo_path)) {
+                    
+                    // Submit verification request
+                    $verification_result = $auth->submitVerificationRequest($user_id, $national_id_path, $photo_path);
+                    
+                    if ($verification_result['success']) {
+                        $success = 'Registration successful! Your documents have been submitted for verification. You will receive an email notification once your account is approved.';
+                        logActivity($user_id, 'register', 'New user registered and submitted verification documents');
+                    } else {
+                        $error = $verification_result['message'];
+                    }
+                } else {
+                    $error = 'Failed to upload verification documents. Please try again.';
+                }
+            } else {
+                $error = $result['message'];
+            }
         }
     }
 }
@@ -79,7 +118,7 @@ include '../includes/header.php';
                         </div>
                     <?php endif; ?>
                     
-                    <form method="POST" action="" id="registrationForm">
+                    <form method="POST" action="" id="registrationForm" enctype="multipart/form-data">
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="mb-3">
@@ -119,7 +158,37 @@ include '../includes/header.php';
                                       placeholder="Your residential address"><?php echo isset($_POST['address']) ? htmlspecialchars($_POST['address']) : ''; ?></textarea>
                         </div>
                         
-
+                        <div class="mb-3">
+                            <label for="national_id" class="form-label">National ID Document *</label>
+                            <input type="file" class="form-control" id="national_id" name="national_id" 
+                                   accept="image/*,.pdf" required>
+                            <div class="form-text">Upload a clear photo or scan of your national ID (JPG, PNG, PDF - Max 5MB)</div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="photo" class="form-label">Current Photo *</label>
+                            <input type="file" class="form-control" id="photo" name="photo" 
+                                   accept="image/*" required>
+                            <div class="form-text">Upload a current photo (taken within 7 days) or use camera below</div>
+                            
+                            <div class="mt-3">
+                                <button type="button" class="btn btn-outline-primary" onclick="openCamera()">
+                                    <i class="fas fa-camera me-2"></i>Take Photo with Camera
+                                </button>
+                                <div id="camera-container" style="display: none;" class="mt-3">
+                                    <video id="camera-video" width="320" height="240" autoplay></video>
+                                    <canvas id="camera-canvas" width="320" height="240" style="display: none;"></canvas>
+                                    <div class="mt-2">
+                                        <button type="button" class="btn btn-success" onclick="capturePhoto()">
+                                            <i class="fas fa-camera me-2"></i>Capture Photo
+                                        </button>
+                                        <button type="button" class="btn btn-secondary" onclick="closeCamera()">
+                                            Cancel
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                         
                         <div class="row">
                             <div class="col-md-6">
@@ -230,6 +299,66 @@ document.getElementById('confirm_password').addEventListener('blur', function() 
         this.setCustomValidity('');
     }
 });
+
+// Camera functionality
+let stream = null;
+
+function openCamera() {
+    const cameraContainer = document.getElementById('camera-container');
+    const video = document.getElementById('camera-video');
+    
+    cameraContainer.style.display = 'block';
+    
+    navigator.mediaDevices.getUserMedia({ video: true })
+        .then(function(mediaStream) {
+            stream = mediaStream;
+            video.srcObject = mediaStream;
+        })
+        .catch(function(error) {
+            console.error('Error accessing camera:', error);
+            alert('Unable to access camera. Please upload a photo file instead.');
+            cameraContainer.style.display = 'none';
+        });
+}
+
+function capturePhoto() {
+    const video = document.getElementById('camera-video');
+    const canvas = document.getElementById('camera-canvas');
+    const context = canvas.getContext('2d');
+    
+    // Draw video frame to canvas
+    context.drawImage(video, 0, 0, canvas.width, canvas.height);
+    
+    // Convert canvas to blob
+    canvas.toBlob(function(blob) {
+        // Create file from blob
+        const file = new File([blob], 'captured_photo.jpg', { type: 'image/jpeg' });
+        
+        // Create new FileList
+        const dataTransfer = new DataTransfer();
+        dataTransfer.items.add(file);
+        
+        // Set file input value
+        document.getElementById('photo').files = dataTransfer.files;
+        
+        // Show success message
+        alert('Photo captured successfully!');
+        
+        // Close camera
+        closeCamera();
+    }, 'image/jpeg', 0.8);
+}
+
+function closeCamera() {
+    const cameraContainer = document.getElementById('camera-container');
+    
+    if (stream) {
+        stream.getTracks().forEach(track => track.stop());
+        stream = null;
+    }
+    
+    cameraContainer.style.display = 'none';
+}
 
 // Form validation
 document.getElementById('registrationForm').addEventListener('submit', function(e) {

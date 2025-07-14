@@ -56,6 +56,11 @@ if (!ob_get_level()) {
                                 </a>
                             </li>
                             <li class="nav-item">
+                                <a class="nav-link" href="<?php echo strpos($_SERVER['PHP_SELF'], '/admin/') !== false ? 'verify_users.php' : 'admin/verify_users.php'; ?>">
+                                    <i class="fas fa-user-check me-1"></i>Verify Users
+                                </a>
+                            </li>
+                            <li class="nav-item">
                                 <a class="nav-link" href="<?php echo strpos($_SERVER['PHP_SELF'], '/admin/') !== false ? 'section_dashboard.php' : 'admin/section_dashboard.php'; ?>">
                                     <i class="fas fa-tools me-1"></i>Section Dashboard
                                 </a>

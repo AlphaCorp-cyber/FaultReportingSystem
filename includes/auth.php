@@ -17,6 +17,11 @@ class Auth {
             );
 
             if ($user && password_verify($password, $user['password_hash'])) {
+                // Check if user is approved (only for residents)
+                if ($user['role'] === 'resident' && $user['verification_status'] !== 'approved') {
+                    return false; // User not yet approved
+                }
+
                 // Update last login (skip if column doesn't exist)
                 try {
                     $this->db->update(
@@ -58,9 +63,9 @@ class Auth {
             // Hash password
             $hashed_password = password_hash($data['password'], PASSWORD_DEFAULT);
 
-            // Insert user
+            // Insert user with pending verification status
             $user_id = $this->db->insert(
-                "INSERT INTO users (first_name, last_name, email, password_hash, phone, address, role, is_active) VALUES (?, ?, ?, ?, ?, ?, 'resident', true)",
+                "INSERT INTO users (first_name, last_name, email, password_hash, phone, address, role, is_active, verification_status) VALUES (?, ?, ?, ?, ?, ?, 'resident', false, 'pending')",
                 [
                     $data['first_name'],
                     $data['last_name'],
@@ -75,6 +80,67 @@ class Auth {
         } catch (Exception $e) {
             error_log("Registration error: " . $e->getMessage());
             return ['success' => false, 'message' => 'Registration failed. Please try again.'];
+        }
+    }
+
+    public function submitVerificationRequest($user_id, $national_id_path, $photo_path) {
+        try {
+            // Insert verification request
+            $request_id = $this->db->insert(
+                "INSERT INTO user_verification_requests (user_id, national_id_path, photo_path, status) VALUES (?, ?, ?, 'pending')",
+                [$user_id, $national_id_path, $photo_path]
+            );
+
+            return ['success' => true, 'message' => 'Verification documents submitted successfully', 'request_id' => $request_id];
+        } catch (Exception $e) {
+            error_log("Verification request error: " . $e->getMessage());
+            return ['success' => false, 'message' => 'Failed to submit verification documents. Please try again.'];
+        }
+    }
+
+    public function approveVerificationRequest($request_id, $admin_id, $notes = '') {
+        try {
+            // Get request details
+            $request = $this->db->selectOne(
+                "SELECT * FROM user_verification_requests WHERE id = ?",
+                [$request_id]
+            );
+
+            if (!$request) {
+                return ['success' => false, 'message' => 'Verification request not found'];
+            }
+
+            // Update request status
+            $this->db->update(
+                "UPDATE user_verification_requests SET status = 'approved', reviewed_by = ?, reviewed_at = CURRENT_TIMESTAMP, admin_notes = ? WHERE id = ?",
+                [$admin_id, $notes, $request_id]
+            );
+
+            // Update user status
+            $this->db->update(
+                "UPDATE users SET is_active = true, verification_status = 'approved' WHERE id = ?",
+                [$request['user_id']]
+            );
+
+            return ['success' => true, 'message' => 'User verification approved successfully'];
+        } catch (Exception $e) {
+            error_log("Verification approval error: " . $e->getMessage());
+            return ['success' => false, 'message' => 'Failed to approve verification. Please try again.'];
+        }
+    }
+
+    public function rejectVerificationRequest($request_id, $admin_id, $notes) {
+        try {
+            // Update request status
+            $this->db->update(
+                "UPDATE user_verification_requests SET status = 'rejected', reviewed_by = ?, reviewed_at = CURRENT_TIMESTAMP, admin_notes = ? WHERE id = ?",
+                [$admin_id, $notes, $request_id]
+            );
+
+            return ['success' => true, 'message' => 'Verification request rejected successfully'];
+        } catch (Exception $e) {
+            error_log("Verification rejection error: " . $e->getMessage());
+            return ['success' => false, 'message' => 'Failed to reject verification. Please try again.'];
         }
     }
 

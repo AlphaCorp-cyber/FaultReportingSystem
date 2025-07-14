@@ -36,7 +36,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
             exit();
         } else {
-            $error = 'Invalid resident credentials';
+            // Check if user exists but is not verified
+            $existing_user = $db->selectOne("SELECT * FROM users WHERE email = ?", [$email]);
+            if ($existing_user && $existing_user['verification_status'] === 'pending') {
+                $error = 'Your account is pending verification. Please wait for admin approval.';
+            } elseif ($existing_user && $existing_user['verification_status'] === 'rejected') {
+                $error = 'Your account verification was rejected. Please contact support.';
+            } else {
+                $error = 'Invalid resident credentials';
+            }
             // Log failed login attempt
             error_log("Failed resident login attempt for email: $email from IP: " . $_SERVER['REMOTE_ADDR']);
         }

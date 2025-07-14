@@ -129,6 +129,16 @@ The system aims to enhance municipal service delivery through improved accountab
   - Fixed department login session compatibility with Auth class expectations
   - Fixed department key mapping in database to match DEPARTMENTS constant
   - All login portals now working correctly: admin, department (WATER001, ROADS001, ELEC001), and resident
+- July 14, 2025. Implemented comprehensive user verification system with document upload
+  - Fixed registration database error by making password column nullable
+  - Added user_verification_requests table for document storage and admin review
+  - Updated registration to require national ID and current photo upload
+  - Added camera functionality for real-time photo capture during registration
+  - Created admin interface (verify_users.php) for reviewing and approving/rejecting users
+  - Implemented verification status tracking (pending, approved, rejected)
+  - Added admin notes system for rejection reasons
+  - Updated login system to prevent unverified users from accessing the system
+  - Enhanced user authentication with proper verification checks
 - July 11, 2025. Completed final migration to Replit environment
   - Fixed database schema with proper PostgreSQL syntax and constraints
   - Added department_code, password_hash, is_active, and department columns to users table
