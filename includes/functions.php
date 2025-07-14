@@ -53,9 +53,9 @@ function getTimeAgo($datetime) {
     if (empty($datetime)) {
         return 'N/A';
     }
-    
+
     $time = time() - strtotime($datetime);
-    
+
     if ($time < 60) return 'just now';
     if ($time < 3600) return floor($time/60) . ' minutes ago';
     if ($time < 86400) return floor($time/3600) . ' hours ago';
@@ -98,27 +98,27 @@ function uploadFile($file, $upload_dir = UPLOAD_DIR) {
     if (!$file || $file['error'] !== UPLOAD_ERR_OK) {
         return ['success' => false, 'message' => 'File upload failed'];
     }
-    
+
     $file_extension = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
     if (!in_array($file_extension, ALLOWED_EXTENSIONS)) {
         return ['success' => false, 'message' => 'File type not allowed'];
     }
-    
+
     if ($file['size'] > MAX_FILE_SIZE) {
         return ['success' => false, 'message' => 'File too large'];
     }
-    
+
     $filename = generateUniqueId() . '.' . $file_extension;
     $target_path = $upload_dir . $filename;
-    
+
     if (!is_dir($upload_dir)) {
         mkdir($upload_dir, 0777, true);
     }
-    
+
     if (move_uploaded_file($file['tmp_name'], $target_path)) {
         return ['success' => true, 'filename' => $filename, 'path' => $target_path];
     }
-    
+
     return ['success' => false, 'message' => 'Failed to save file'];
 }
 
@@ -182,31 +182,69 @@ function isValidDepartment($department) {
 }
 
 function getPriorityLevel($category, $description) {
-    // Auto-assign priority based on category and keywords
-    $high_priority_keywords = ['urgent', 'emergency', 'burst', 'flooding', 'danger', 'accident'];
-    $medium_priority_keywords = ['broken', 'damaged', 'not working', 'problem'];
-    
+    $high_priority_keywords = ['emergency', 'urgent', 'broken', 'burst', 'flooding', 'dangerous', 'blocked', 'outage'];
     $description_lower = strtolower($description);
-    
-    // Check for high priority keywords
+
+    // Check for emergency keywords
     foreach ($high_priority_keywords as $keyword) {
         if (strpos($description_lower, $keyword) !== false) {
             return 'high';
         }
     }
-    
-    // Check for medium priority keywords
-    foreach ($medium_priority_keywords as $keyword) {
-        if (strpos($description_lower, $keyword) !== false) {
-            return 'medium';
-        }
-    }
-    
+
     // Category-based priority
-    if (in_array($category, ['water', 'electricity'])) {
+    $high_priority_categories = ['water', 'electricity'];
+    if (in_array($category, $high_priority_categories)) {
         return 'medium';
     }
-    
+
     return 'low';
+}
+
+/**
+ * Get approximate coordinates for a location
+ * This is a simple implementation that could be enhanced with actual geocoding service
+ */
+function getLocationCoordinates($location) {
+    // Default coordinates for Redcliff, Zimbabwe
+    $default_coordinates = [
+        'latitude' => -18.1833,
+        'longitude' => 29.7667
+    ];
+
+    // Simple location mapping for common areas in Redcliff
+    $location_map = [
+        'town center' => ['latitude' => -18.1833, 'longitude' => 29.7667],
+        'central' => ['latitude' => -18.1833, 'longitude' => 29.7667],
+        'industrial area' => ['latitude' => -18.1900, 'longitude' => 29.7600],
+        'residential area' => ['latitude' => -18.1800, 'longitude' => 29.7700],
+        'main street' => ['latitude' => -18.1830, 'longitude' => 29.7665],
+        'market area' => ['latitude' => -18.1840, 'longitude' => 29.7670],
+        'school area' => ['latitude' => -18.1820, 'longitude' => 29.7680],
+        'clinic area' => ['latitude' => -18.1825, 'longitude' => 29.7675],
+        'north' => ['latitude' => -18.1800, 'longitude' => 29.7667],
+        'south' => ['latitude' => -18.1866, 'longitude' => 29.7667],
+        'east' => ['latitude' => -18.1833, 'longitude' => 29.7700],
+        'west' => ['latitude' => -18.1833, 'longitude' => 29.7634]
+    ];
+
+    $location_lower = strtolower(trim($location));
+
+    // Check for matches in the location map
+    foreach ($location_map as $area => $coords) {
+        if (strpos($location_lower, $area) !== false) {
+            return $coords;
+        }
+    }
+
+    // If no specific match found, add small random offset to default coordinates
+    // to distinguish different reports
+    $lat_offset = (mt_rand(-50, 50) / 10000); // ±0.005 degrees
+    $lng_offset = (mt_rand(-50, 50) / 10000); // ±0.005 degrees
+
+    return [
+        'latitude' => $default_coordinates['latitude'] + $lat_offset,
+        'longitude' => $default_coordinates['longitude'] + $lng_offset
+    ];
 }
 ?>
