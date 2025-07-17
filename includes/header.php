@@ -75,6 +75,11 @@ if (!ob_get_level()) {
                                     <i class="fas fa-analytics me-1"></i>Analytics
                                 </a>
                             </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="<?php echo strpos($_SERVER['PHP_SELF'], '/admin/') !== false ? 'fault_predictions.php' : 'admin/fault_predictions.php'; ?>">
+                                    <i class="fas fa-crystal-ball me-1"></i>Fault Predictions
+                                </a>
+                            </li>
                         <?php else: ?>
                             <li class="nav-item">
                                 <a class="nav-link" href="<?php echo strpos($_SERVER['PHP_SELF'], '/resident/') !== false ? 'dashboard.php' : 'resident/dashboard.php'; ?>">
